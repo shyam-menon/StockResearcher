@@ -83,8 +83,13 @@ def top_choice(result: dict) -> tuple[str, float]:
     return label, probs[label]
 
 
-def noul_yes(result: dict) -> bool:
-    return result["p_yes"] >= 0.5
+def noul_yes(result: dict, threshold: float = 0.5) -> bool:
+    """threshold=0.5 (the default) treats a coin-flip as "yes". Raise it for judgments
+    where the framework's own guardrail places the burden of proof on the affirmative
+    case (e.g. Module 3's "assume No Moat, require hard evidence to upgrade") -- a
+    p_yes of exactly 0.5 means the model is reporting genuine uncertainty, not a
+    lean towards yes, and shouldn't silently round up to a confident answer."""
+    return result["p_yes"] > threshold
 
 
 # --------------------------------------------------------------------------
@@ -183,6 +188,23 @@ def module_02_business(brief: Brief) -> dict:
 # --------------------------------------------------------------------------
 
 MOAT_SOURCES = ["switching_costs", "intangible_assets", "network_effects", "low_cost_production", "counter_positioning"]
+# Module 3's own guardrail: "Start from the assumption of No Moat and require hard
+# evidence to upgrade... If you cannot answer concretely, the moat is not proven."
+# A bare majority (just over 0.5) isn't "hard evidence" -- require the model to be
+# meaningfully more confident than a coin flip before calling a source present.
+MOAT_PRESENCE_THRESHOLD = 0.65
+
+def _moat_source_label(p_yes: float) -> str:
+    """Present/Absent require the model to be meaningfully more confident than a
+    coin flip in either direction; the genuinely ambiguous middle stays "Unclear"
+    rather than being forced into a false-confident badge either way."""
+    if p_yes >= MOAT_PRESENCE_THRESHOLD:
+        return "Present"
+    if p_yes <= 1 - MOAT_PRESENCE_THRESHOLD:
+        return "Absent"
+    return "Unclear"
+
+
 MOAT_SOURCE_LABELS = {
     "switching_costs": "Switching Costs: do customers face significant cost or friction switching to a competitor?",
     "intangible_assets": "Intangible Assets: does a brand, patent, regulatory licence, or proprietary data provide real pricing power?",
@@ -221,7 +243,10 @@ def module_03_moat(brief: Brief) -> dict:
         },
     }
     result = ask(state, questions)
-    present = {src: noul_yes(result[f"present_{src}"]) for src in MOAT_SOURCES}
+    present = {
+        src: {"label": _moat_source_label(result[f"present_{src}"]["p_yes"]), "p_yes": result[f"present_{src}"]["p_yes"]}
+        for src in MOAT_SOURCES
+    }
     size, _ = top_choice(result["size"])
     direction, _ = top_choice(result["direction"])
     return {"present": present, "size": size, "direction": direction}
@@ -758,8 +783,8 @@ def main(xlsx_path: str, brief_path: str) -> None:
 
     _section("Module 03 — Moat Analysis")
     moat = module_03_moat(brief)
-    for src, present in moat["present"].items():
-        print(f"  {src}: {'present' if present else 'absent'}")
+    for src, info in moat["present"].items():
+        print(f"  {src}: {info['label']} (p={info['p_yes']:.2f})")
     print(f"Overall moat: {moat['size']}, {moat['direction']}")
 
     _section("Module 04 — Growth Drivers")

@@ -8,14 +8,14 @@ import re
 _BADGE_CLASS = {
     "Green": "good", "Strong": "good", "Wide": "good", "Widening": "good",
     "AntiFragile": "good", "Anti-Fragile": "good", "Positive": "good", "Bullish": "good",
-    "VeryStrong": "good", "Excellent": "good", "Good": "good", "Buy": "good",
+    "VeryStrong": "good", "Excellent": "good", "Good": "good", "Buy": "good", "Present": "good",
     "Yellow": "warn", "Mixed": "warn", "Narrow": "warn", "Stable": "warn",
     "Robust": "warn", "Neutral": "warn", "Adequate": "warn", "Average": "warn",
-    "Medium": "warn", "Watchlist": "warn", "Moderate": "warn",
+    "Medium": "warn", "Watchlist": "warn", "Moderate": "warn", "Unclear": "warn",
     "Red": "bad", "Weak": "bad", "None": "bad", "Narrowing": "bad",
     "Fragile": "bad", "Negative": "bad", "Bearish": "bad", "Stressed": "bad",
     "Poor": "bad", "Below Average": "bad", "High": "bad", "Reject": "bad",
-    "NotApplicable": "muted",
+    "NotApplicable": "muted", "Absent": "muted",
 }
 
 
@@ -88,7 +88,10 @@ def render_html(
         ]),
         _section(
             "03 &middot; Moat Analysis",
-            [(_title_case(src), _badge("Strong" if present else "None")) for src, present in moat["present"].items()]
+            [
+                (_title_case(src), f"{_badge(info['label'])} <span class='note'>(p={info['p_yes']:.2f})</span>")
+                for src, info in moat["present"].items()
+            ]
             + [("Overall size", _badge(moat["size"])), ("Direction", _badge(moat["direction"]))],
         ),
         _section(
