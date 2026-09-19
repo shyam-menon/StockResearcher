@@ -174,12 +174,15 @@ def module_02_business(brief: Brief) -> dict:
         },
     }
     result = ask(state, questions)
-    revenue_pattern, _ = top_choice(result["revenue_pattern"])
-    recession_behavior, _ = top_choice(result["recession_behavior"])
+    revenue_pattern, revenue_pattern_confidence = top_choice(result["revenue_pattern"])
+    recession_behavior, recession_behavior_confidence = top_choice(result["recession_behavior"])
     return {
         "revenue_pattern": revenue_pattern,
+        "revenue_pattern_confidence": revenue_pattern_confidence,
         "has_pricing_power": noul_yes(result["pricing_power"]),
+        "pricing_power_p_yes": result["pricing_power"]["p_yes"],
         "recession_behavior": recession_behavior,
+        "recession_behavior_confidence": recession_behavior_confidence,
     }
 
 
@@ -247,9 +250,15 @@ def module_03_moat(brief: Brief) -> dict:
         src: {"label": _moat_source_label(result[f"present_{src}"]["p_yes"]), "p_yes": result[f"present_{src}"]["p_yes"]}
         for src in MOAT_SOURCES
     }
-    size, _ = top_choice(result["size"])
-    direction, _ = top_choice(result["direction"])
-    return {"present": present, "size": size, "direction": direction}
+    size, size_confidence = top_choice(result["size"])
+    direction, direction_confidence = top_choice(result["direction"])
+    return {
+        "present": present,
+        "size": size,
+        "size_confidence": size_confidence,
+        "direction": direction,
+        "direction_confidence": direction_confidence,
+    }
 
 
 # --------------------------------------------------------------------------
@@ -283,9 +292,11 @@ def module_04_growth(brief: Brief) -> dict:
         for key, label in GROWTH_DRIVER_LABELS.items()
     }
     result = ask(state, questions)
-    ratings = {key: top_choice(result[f"driver_{key}"])[0] for key in GROWTH_DRIVER_LABELS}
+    choices = {key: top_choice(result[f"driver_{key}"]) for key in GROWTH_DRIVER_LABELS}
+    ratings = {key: label for key, (label, _) in choices.items()}
+    confidences = {key: conf for key, (_, conf) in choices.items()}
     strong = [k for k, v in ratings.items() if v == "Strong"]
-    return {"ratings": ratings, "primary_drivers": strong}
+    return {"ratings": ratings, "confidences": confidences, "primary_drivers": strong}
 
 
 # --------------------------------------------------------------------------
@@ -365,7 +376,9 @@ def module_06_risk(brief: Brief) -> dict:
         for key, label in RISK_DIMENSION_LABELS.items()
     }
     result = ask(state, questions)
-    ratings = {key: top_choice(result[f"risk_{key}"])[0] for key in RISK_DIMENSION_LABELS}
+    choices = {key: top_choice(result[f"risk_{key}"]) for key in RISK_DIMENSION_LABELS}
+    ratings = {key: label for key, (label, _) in choices.items()}
+    confidences = {key: conf for key, (_, conf) in choices.items()}
     avg = sum(_RISK_WEIGHT[r] for r in ratings.values()) / len(ratings)
     if avg >= 2.5:
         overall = "High"
@@ -373,7 +386,7 @@ def module_06_risk(brief: Brief) -> dict:
         overall = "Medium"
     else:
         overall = "Low"
-    return {"ratings": ratings, "weighted_average": avg, "overall": overall}
+    return {"ratings": ratings, "confidences": confidences, "weighted_average": avg, "overall": overall}
 
 
 # --------------------------------------------------------------------------
@@ -414,9 +427,14 @@ def module_08_sentiment(brief: Brief, fd: FinancialData) -> dict:
         },
     }
     result = ask(state, questions)
-    tone, _ = top_choice(result["sentiment_tone"])
-    outlook, _ = top_choice(result["outlook_12m"])
-    return {"sentiment_tone": tone, "outlook_12m": outlook}
+    tone, tone_confidence = top_choice(result["sentiment_tone"])
+    outlook, outlook_confidence = top_choice(result["outlook_12m"])
+    return {
+        "sentiment_tone": tone,
+        "sentiment_tone_confidence": tone_confidence,
+        "outlook_12m": outlook,
+        "outlook_12m_confidence": outlook_confidence,
+    }
 
 
 # --------------------------------------------------------------------------
@@ -446,7 +464,9 @@ def module_09_ai_risk(brief: Brief) -> dict:
         for key, label in AI_LENS_LABELS.items()
     }
     result = ask(state, questions)
-    ratings = {key: top_choice(result[f"ai_{key}"])[0] for key in AI_LENS_LABELS}
+    choices = {key: top_choice(result[f"ai_{key}"]) for key in AI_LENS_LABELS}
+    ratings = {key: label for key, (label, _) in choices.items()}
+    confidences = {key: conf for key, (_, conf) in choices.items()}
 
     counts = {"Fragile": 0, "Robust": 0, "AntiFragile": 0}
     for v in ratings.values():
@@ -457,7 +477,7 @@ def module_09_ai_risk(brief: Brief) -> dict:
         overall = "Anti-Fragile"
     else:
         overall = "Robust"
-    return {"ratings": ratings, "overall": overall}
+    return {"ratings": ratings, "confidences": confidences, "overall": overall}
 
 
 # --------------------------------------------------------------------------
@@ -502,8 +522,9 @@ def module_10_balance_sheet(fd: FinancialData) -> dict:
         }
     }
     result = ask(state, questions)
-    verdict, _ = top_choice(result["verdict"])
+    verdict, verdict_confidence = top_choice(result["verdict"])
     computed["verdict"] = verdict
+    computed["verdict_confidence"] = verdict_confidence
     return computed
 
 
@@ -563,8 +584,9 @@ def module_11_cash_flow(fd: FinancialData) -> dict:
     }
     result = ask(state, questions)
     grade_levels = ["Poor", "Below Average", "Average", "Good", "Excellent"]
+    raw_score = result["capital_allocation_grade"]["score"]
     # Score.score is a probability-weighted position (a float), not a level index -- round and clamp.
-    grade_index = max(0, min(len(grade_levels) - 1, round(result["capital_allocation_grade"]["score"])))
+    grade_index = max(0, min(len(grade_levels) - 1, round(raw_score)))
 
     return {
         "cfo_to_pat_latest": cfo_pat_latest,
@@ -572,6 +594,8 @@ def module_11_cash_flow(fd: FinancialData) -> dict:
         "fcf_latest": fcf_latest,
         "red_flags": red_flags,
         "capital_allocation_grade": grade_levels[grade_index],
+        "capital_allocation_grade_raw_score": raw_score,
+        "capital_allocation_grade_max_score": len(grade_levels) - 1,
         "note": "Red-flag checklist covers 3 data-driven checks; the framework's full 12-item list also needs "
                 "shareholding/related-party data not present in a screener.in export.",
     }
@@ -624,7 +648,7 @@ def module_12_roic_runway(fd: FinancialData, brief: Brief) -> dict:
         }
     }
     result = ask(state, questions)
-    runway, _ = top_choice(result["runway"])
+    runway, runway_confidence = top_choice(result["runway"])
     return {
         "historical_roic": historical_roic,
         "incremental_roic_3yr": incremental_roic,
@@ -632,6 +656,7 @@ def module_12_roic_runway(fd: FinancialData, brief: Brief) -> dict:
         "implied_growth": implied_growth,
         "actual_revenue_cagr_3yr": fd.revenue_cagr(3),
         "runway": runway,
+        "runway_confidence": runway_confidence,
     }
 
 
@@ -723,7 +748,7 @@ def module_14_decision(
         }
     }
     result = ask(state, questions)
-    decision, _ = top_choice(result["decision"])
+    decision, decision_confidence = top_choice(result["decision"])
 
     kill_criteria = [
         f"Incremental ROIC falls below the ~12% cost-of-capital floor (currently "
@@ -748,6 +773,7 @@ def module_14_decision(
         "financial_quality": financial_quality,
         "valuation_verdict": valuation_verdict,
         "decision": decision,
+        "decision_confidence": decision_confidence,
         "kill_criteria": kill_criteria,
         "one_line_thesis": one_line_thesis,
     }
@@ -778,19 +804,21 @@ def main(xlsx_path: str, brief_path: str) -> None:
 
     _section("Module 02 — Business Analysis")
     business = module_02_business(brief)
-    print(f"Revenue pattern: {business['revenue_pattern']}  |  Pricing power evidenced: {business['has_pricing_power']}  |  "
-          f"Recession behavior: {business['recession_behavior']}")
+    print(f"Revenue pattern: {business['revenue_pattern']} (p={business['revenue_pattern_confidence']:.2f})  |  "
+          f"Pricing power evidenced: {business['has_pricing_power']} (p={business['pricing_power_p_yes']:.2f})  |  "
+          f"Recession behavior: {business['recession_behavior']} (p={business['recession_behavior_confidence']:.2f})")
 
     _section("Module 03 — Moat Analysis")
     moat = module_03_moat(brief)
     for src, info in moat["present"].items():
         print(f"  {src}: {info['label']} (p={info['p_yes']:.2f})")
-    print(f"Overall moat: {moat['size']}, {moat['direction']}")
+    print(f"Overall moat: {moat['size']} (p={moat['size_confidence']:.2f}), "
+          f"{moat['direction']} (p={moat['direction_confidence']:.2f})")
 
     _section("Module 04 — Growth Drivers")
     growth = module_04_growth(brief)
     for driver, rating in growth["ratings"].items():
-        print(f"  {driver}: {rating}")
+        print(f"  {driver}: {rating} (p={growth['confidences'][driver]:.2f})")
     print(f"Primary (Strong) drivers: {growth['primary_drivers']}")
 
     _section("Module 05 — Phase Key Metrics")
@@ -804,7 +832,7 @@ def main(xlsx_path: str, brief_path: str) -> None:
     _section("Module 06 — Risk Analysis")
     risk = module_06_risk(brief)
     for dim, rating in risk["ratings"].items():
-        print(f"  {dim}: {rating}")
+        print(f"  {dim}: {rating} (p={risk['confidences'][dim]:.2f})")
     print(f"Weighted average: {risk['weighted_average']:.2f} -> Overall risk: {risk['overall']}")
 
     _section("Module 07 — Valuation Metrics")
@@ -814,12 +842,13 @@ def main(xlsx_path: str, brief_path: str) -> None:
 
     _section("Module 08 — Price & Sentiment")
     sentiment = module_08_sentiment(brief, fd)
-    print(f"Sentiment tone: {sentiment['sentiment_tone']}  |  12-month outlook: {sentiment['outlook_12m']}")
+    print(f"Sentiment tone: {sentiment['sentiment_tone']} (p={sentiment['sentiment_tone_confidence']:.2f})  |  "
+          f"12-month outlook: {sentiment['outlook_12m']} (p={sentiment['outlook_12m_confidence']:.2f})")
 
     _section("Module 09 — AI Risk Assessment")
     ai_risk = module_09_ai_risk(brief)
     for lens, rating in ai_risk["ratings"].items():
-        print(f"  {lens}: {rating}")
+        print(f"  {lens}: {rating} (p={ai_risk['confidences'][lens]:.2f})")
     print(f"Overall: {ai_risk['overall']}")
 
     _section("Module 10 — Balance Sheet Analysis")
@@ -830,14 +859,15 @@ def main(xlsx_path: str, brief_path: str) -> None:
     print(f"Receivable days: {balance_sheet['receivable_days_prior']:.0f} -> {balance_sheet['receivable_days_latest']:.0f} "
           f"-> Asset quality: {balance_sheet['asset_quality_rating']}")
     print(f"Promoter quality: {balance_sheet['promoter_quality_rating']}")
-    print(f"Verdict: {balance_sheet['verdict']}")
+    print(f"Verdict: {balance_sheet['verdict']} (p={balance_sheet['verdict_confidence']:.2f})")
 
     _section("Module 11 — Cash Flow Analysis")
     cash_flow = module_11_cash_flow(fd)
     print(f"CFO/PAT (latest): {cash_flow['cfo_to_pat_latest']:.2f}x  |  3yr avg: {cash_flow['cfo_to_pat_3yr_avg']:.2f}x")
     print(f"FCF (latest): {cash_flow['fcf_latest']:,.2f} Cr")
     print(f"Red flags: {cash_flow['red_flags'] or 'None'}")
-    print(f"Capital allocation grade: {cash_flow['capital_allocation_grade']}")
+    print(f"Capital allocation grade: {cash_flow['capital_allocation_grade']} "
+          f"(score={cash_flow['capital_allocation_grade_raw_score']:.2f}/{cash_flow['capital_allocation_grade_max_score']})")
     print(f"Note: {cash_flow['note']}")
 
     _section("Module 12 — Incremental ROIC & Runway")
@@ -849,7 +879,7 @@ def main(xlsx_path: str, brief_path: str) -> None:
         print(f"Reinvestment rate: {roic_runway['reinvestment_rate']:.1%}  |  Implied growth: "
               f"{roic_runway['implied_growth']:.1%}  vs actual 3yr revenue CAGR: "
               f"{roic_runway['actual_revenue_cagr_3yr']:.1%}")
-    print(f"Runway: {roic_runway['runway']}")
+    print(f"Runway: {roic_runway['runway']} (p={roic_runway['runway_confidence']:.2f})")
 
     _section("Module 13 — Reverse Valuation")
     valuation = module_13_reverse_valuation(fd, brief)
@@ -867,7 +897,7 @@ def main(xlsx_path: str, brief_path: str) -> None:
     )
     print(f"Business Quality: {decision['business_quality']}/10  |  Financial Quality: "
           f"{decision['financial_quality']}/10  |  Valuation: {decision['valuation_verdict']}")
-    print(f"DECISION: {decision['decision']}")
+    print(f"DECISION: {decision['decision']} (p={decision['decision_confidence']:.2f})")
     print("Kill criteria:")
     for kc in decision["kill_criteria"]:
         print(f"  - {kc}")

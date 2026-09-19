@@ -33,6 +33,14 @@ def _badge_as(value, mapping: dict[str, str]) -> str:
     return f'<span class="badge {cls}">{html.escape(text)}</span>'
 
 
+def _badge_p(value, p: float, mapping: dict[str, str] | None = None) -> str:
+    """A badge plus the model's own confidence for that judgment, so a borderline call
+    (e.g. p=0.55) reads differently from a confident one (p=0.95) instead of both
+    collapsing into the same flat label."""
+    badge = _badge_as(value, mapping) if mapping else _badge(value)
+    return f"{badge} <span class='note'>(p={p:.2f})</span>"
+
+
 def _fmt(value) -> str:
     if value is None:
         return "&mdash;"
@@ -82,9 +90,9 @@ def render_html(
             ("Consecutive dividend years", _fmt(phase["capital_returns_years"])),
         ]),
         _section("02 &middot; Business Analysis", [
-            ("Revenue pattern", _fmt(business["revenue_pattern"])),
-            ("Pricing power evidenced", _fmt(business["has_pricing_power"])),
-            ("Recession behavior", _fmt(business["recession_behavior"])),
+            ("Revenue pattern", _badge_p(business["revenue_pattern"], business["revenue_pattern_confidence"])),
+            ("Pricing power evidenced", f"{_fmt(business['has_pricing_power'])} <span class='note'>(p={business['pricing_power_p_yes']:.2f})</span>"),
+            ("Recession behavior", _badge_p(business["recession_behavior"], business["recession_behavior_confidence"])),
         ]),
         _section(
             "03 &middot; Moat Analysis",
@@ -92,11 +100,14 @@ def render_html(
                 (_title_case(src), f"{_badge(info['label'])} <span class='note'>(p={info['p_yes']:.2f})</span>")
                 for src, info in moat["present"].items()
             ]
-            + [("Overall size", _badge(moat["size"])), ("Direction", _badge(moat["direction"]))],
+            + [
+                ("Overall size", _badge_p(moat["size"], moat["size_confidence"])),
+                ("Direction", _badge_p(moat["direction"], moat["direction_confidence"])),
+            ],
         ),
         _section(
             "04 &middot; Growth Drivers",
-            [(_title_case(k), _badge(v)) for k, v in growth["ratings"].items()],
+            [(_title_case(k), _badge_p(v, growth["confidences"][k])) for k, v in growth["ratings"].items()],
             extra=f'<p class="note">Primary drivers: '
                   f'{", ".join(d.replace("_", " ") for d in growth["primary_drivers"]) or "none"}</p>',
         ),
@@ -111,7 +122,7 @@ def render_html(
         ),
         _section(
             "06 &middot; Risk Analysis",
-            [(_title_case(k), _badge(v)) for k, v in risk["ratings"].items()]
+            [(_title_case(k), _badge_p(v, risk["confidences"][k])) for k, v in risk["ratings"].items()]
             + [
                 ("Weighted average", f"{risk['weighted_average']:.2f}"),
                 ("Overall risk", _badge_as(risk["overall"], {"Low": "good", "Medium": "warn", "High": "bad"})),
@@ -123,12 +134,12 @@ def render_html(
             ("Ignore", _fmt(", ".join(val_metrics["ignore"]))),
         ]),
         _section("08 &middot; Price &amp; Sentiment", [
-            ("Sentiment tone", _badge(sentiment["sentiment_tone"])),
-            ("12-month outlook", _badge(sentiment["outlook_12m"])),
+            ("Sentiment tone", _badge_p(sentiment["sentiment_tone"], sentiment["sentiment_tone_confidence"])),
+            ("12-month outlook", _badge_p(sentiment["outlook_12m"], sentiment["outlook_12m_confidence"])),
         ]),
         _section(
             "09 &middot; AI Risk Assessment",
-            [(_title_case(k), _badge(v)) for k, v in ai_risk["ratings"].items()]
+            [(_title_case(k), _badge_p(v, ai_risk["confidences"][k])) for k, v in ai_risk["ratings"].items()]
             + [("Overall", _badge(ai_risk["overall"]))],
         ),
         _section("10 &middot; Balance Sheet Analysis", [
@@ -140,7 +151,7 @@ def render_html(
              f"{balance_sheet['receivable_days_prior']:.0f} &rarr; {balance_sheet['receivable_days_latest']:.0f}"),
             ("Asset quality", _badge(balance_sheet["asset_quality_rating"])),
             ("Promoter quality", f'<span class="note">{html.escape(balance_sheet["promoter_quality_rating"])}</span>'),
-            ("Verdict", _badge(balance_sheet["verdict"])),
+            ("Verdict", _badge_p(balance_sheet["verdict"], balance_sheet["verdict_confidence"])),
         ]),
         _section(
             "11 &middot; Cash Flow Analysis",
@@ -148,7 +159,9 @@ def render_html(
                 ("CFO/PAT latest / 3yr avg", f"{cash_flow['cfo_to_pat_latest']:.2f}x / {cash_flow['cfo_to_pat_3yr_avg']:.2f}x"),
                 ("FCF (latest)", f"{cash_flow['fcf_latest']:,.2f} Cr"),
                 ("Red flags", _list(cash_flow["red_flags"])),
-                ("Capital allocation grade", _badge(cash_flow["capital_allocation_grade"])),
+                ("Capital allocation grade",
+                 f"{_badge(cash_flow['capital_allocation_grade'])} <span class='note'>"
+                 f"(score={cash_flow['capital_allocation_grade_raw_score']:.2f}/{cash_flow['capital_allocation_grade_max_score']})</span>"),
             ],
             extra=f'<p class="note">{html.escape(cash_flow["note"])}</p>',
         ),
@@ -158,7 +171,7 @@ def render_html(
             ("Reinvestment rate", _pct(roic_runway["reinvestment_rate"])),
             ("Implied growth vs actual 3yr CAGR",
              f"{_pct(roic_runway['implied_growth'])} vs {_pct(roic_runway['actual_revenue_cagr_3yr'])}"),
-            ("Runway", _badge(roic_runway["runway"])),
+            ("Runway", _badge_p(roic_runway["runway"], roic_runway["runway_confidence"])),
         ]),
         _section(
             "13 &middot; Reverse Valuation",
@@ -179,13 +192,14 @@ def render_html(
             ("Business Quality", f"{decision['business_quality']}/10"),
             ("Financial Quality", f"{decision['financial_quality']}/10"),
             ("Valuation verdict", _fmt(decision["valuation_verdict"])),
-            ("Decision", _badge(decision["decision"])),
+            ("Decision", _badge_p(decision["decision"], decision["decision_confidence"])),
             ("Kill criteria", _list(decision["kill_criteria"])),
         ]),
     ]
 
     section_html = "".join(f"<section><h2>{title}</h2>{body}</section>" for title, body in sections)
     decision_class = _BADGE_CLASS.get(decision["decision"], "muted")
+    decision_p = decision["decision_confidence"]
 
     return f"""<!doctype html>
 <html lang="en">
@@ -254,7 +268,8 @@ def render_html(
 
   <div class="thesis">
     {html.escape(decision["one_line_thesis"])}
-    <div class="decision-line">Decision: <span class="badge {decision_class}">{html.escape(decision["decision"])}</span></div>
+    <div class="decision-line">Decision: <span class="badge {decision_class}">{html.escape(decision["decision"])}</span>
+      <span class="note">(p={decision_p:.2f})</span></div>
   </div>
 
   {section_html}
