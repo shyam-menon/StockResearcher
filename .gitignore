@@ -4,8 +4,8 @@ __pycache__/
 
 # Licensed screener.in Excel template (Dr. Vijay Malik) -- its own Instructions
 # tab prohibits copying/sharing, so exports never get committed. Supply your
-# own copy locally at Input/<Company>.xlsx.
-Input/*.xlsx
+# own copy locally at Input/<Company>/<Company>.xlsx (any nesting depth).
+Input/**/*.xlsx
 
 # Unrelated earlier demo (TypeSafe "Parallel Questions" GDPR cost/speed cookbook)
 demo.py

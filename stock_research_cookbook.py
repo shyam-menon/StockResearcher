@@ -844,8 +844,11 @@ def main(xlsx_path: str, brief_path: str) -> None:
         print(f"  - {kc}")
     print(f"\nOne-line thesis: {decision['one_line_thesis']}")
 
-    out_dir = Path("Output")
-    out_dir.mkdir(exist_ok=True)
+    # Mirror the input side's per-stock folder (Input/<Company>/...) on the output
+    # side (Output/<Company>/...), whatever that folder happens to be named.
+    company_folder = Path(xlsx_path).resolve().parent.name
+    out_dir = Path("Output") / company_folder
+    out_dir.mkdir(parents=True, exist_ok=True)
     out_path = out_dir / f"{_slugify(company)}_report.html"
     out_path.write_text(
         render_html(
@@ -858,6 +861,6 @@ def main(xlsx_path: str, brief_path: str) -> None:
 
 
 if __name__ == "__main__":
-    xlsx = sys.argv[1] if len(sys.argv) > 1 else "Input/Shilchar Tech.xlsx"
-    brief_file = sys.argv[2] if len(sys.argv) > 2 else "Input/shilchar_brief.json"
+    xlsx = sys.argv[1] if len(sys.argv) > 1 else "Input/Shilchar/Shilchar Tech.xlsx"
+    brief_file = sys.argv[2] if len(sys.argv) > 2 else "Input/Shilchar/shilchar_brief.json"
     main(xlsx, brief_file)

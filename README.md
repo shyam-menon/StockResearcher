@@ -72,8 +72,13 @@ the comment above `module_04_growth` in `stock_research_cookbook.py`).
 
 ## Running it
 
+Group each stock's inputs in their own folder under `Input\` — e.g.
+`Input\Shilchar\Shilchar Tech.xlsx` and `Input\Shilchar\shilchar_brief.json`. The
+report lands in the matching `Output\<Company>\` folder automatically (named
+after whatever folder the Excel file lives in).
+
 ```bash
-.venv\Scripts\python.exe stock_research_cookbook.py "Input\<Company>.xlsx" "Input\<company>_brief.json"
+.venv\Scripts\python.exe stock_research_cookbook.py "Input\<Company>\<Company>.xlsx" "Input\<Company>\<company>_brief.json"
 ```
 
 Results are cached to `stock_cache.json`, keyed by the exact content of the Excel
@@ -88,7 +93,8 @@ encoding on Windows isn't UTF-8 unless this is set.
 
 Run the prompt below in any capable chat LLM with the company's annual report,
 investor presentation, or other filings attached or pasted in. Save its output
-exactly as `Input\<company>_brief.json`.
+as `Input\<Company>\<company>_brief.json`, alongside that company's screener.in
+Excel export.
 
 ````text
 You are preparing a structured evidence brief for a stock research pipeline. You
