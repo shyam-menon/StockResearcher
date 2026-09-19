@@ -1,0 +1,104 @@
+@startuml StockResearchCookbookArchitecture
+title Stock Research Framework Cookbook — Excel + Brief JSON + TypeSafe AI + Code
+
+skinparam rectangle {
+  BackgroundColor<<code>> #E6F4EA
+  BorderColor<<code>> #1e7a34
+  BackgroundColor<<ai>> #E8F0FE
+  BorderColor<<ai>> #1a56db
+  BackgroundColor<<hybrid>> #FDF3E0
+  BorderColor<<hybrid>> #a5670e
+  BackgroundColor<<final>> #FBE8E7
+  BorderColor<<final>> #b3261e
+}
+
+database "Excel export\n(<company>.xlsx,\nscreener.in template)" as ExcelFile
+database "Brief JSON\n(<company>_brief.json)" as BriefFile
+
+rectangle "excel_loader.py\n(raw P&L / balance sheet /\ncash flow -> ratios)" as ExcelLoader
+rectangle "brief_schema.py\n(load + validate)" as BriefLoader
+
+rectangle "FinancialData\nSales, PAT, CFO, ROE,\nROCE, ROIC, DSO, ..." as FD
+rectangle "Brief\nbusiness desc, moat,\nrisk, sentiment, AI-risk,\nvaluation scenarios" as Brief
+
+ExcelFile --> ExcelLoader
+BriefFile --> BriefLoader
+ExcelLoader --> FD
+BriefLoader --> Brief
+
+cloud "TypeSafe API\nsystem_one (model jev-1.13.0)\nNoul / Choice / Score" as TS
+database "stock_cache.json\n(content-addressed cache)" as Cache
+TS <--> Cache : ask()\n(_call_system_one)
+
+rectangle "01 Business Phase" as M01 <<code>>
+rectangle "05 Phase Key Metrics" as M05 <<code>>
+rectangle "07 Valuation Metric\nLookup" as M07 <<code>>
+rectangle "13 Reverse Valuation" as M13 <<code>>
+
+rectangle "02 Business Analysis" as M02 <<ai>>
+rectangle "03 Moat Analysis" as M03 <<ai>>
+rectangle "04 Growth Drivers" as M04 <<ai>>
+rectangle "08 Price & Sentiment" as M08 <<ai>>
+
+rectangle "06 Risk Analysis" as M06 <<hybrid>>
+rectangle "09 AI Risk Assessment" as M09 <<hybrid>>
+rectangle "10 Balance Sheet" as M10 <<hybrid>>
+rectangle "11 Cash Flow Analysis" as M11 <<hybrid>>
+rectangle "12 Incremental ROIC\n& Runway" as M12 <<hybrid>>
+
+rectangle "14 Investment Decision\n(Reject / Watchlist / Buy)" as M14 <<final>>
+
+FD --> M01
+FD --> M05
+FD --> M08
+FD --> M10
+FD --> M11
+FD --> M12
+FD --> M13
+
+Brief --> M02
+Brief --> M03
+Brief --> M04
+Brief --> M06
+Brief --> M08
+Brief --> M09
+Brief --> M12
+Brief --> M13
+
+M01 --> M07 : phase
+
+M02 --> TS
+M03 --> TS
+M04 --> TS
+M08 --> TS
+M06 --> TS
+M09 --> TS
+M10 --> TS
+M11 --> TS
+M12 --> TS
+
+M01 --> M14
+M03 --> M14
+M04 --> M14
+M05 --> M14
+M06 --> M14
+M09 --> M14
+M10 --> M14
+M11 --> M14
+M12 --> M14
+M13 --> M14
+
+rectangle "Console report" as Console
+rectangle "HTML report\n(html_report.py)" as HTML
+
+M14 --> Console
+M14 --> HTML
+
+legend right
+  |<back:#E6F4EA>| Code only — plain Python arithmetic, no AI call |
+  |<back:#E8F0FE>| TypeSafe only — one batched Noul/Choice/Score call over Brief evidence |
+  |<back:#FDF3E0>| Hybrid — code computes/aggregates, TypeSafe interprets or classifies |
+  |<back:#FBE8E7>| Final decision — combines every module's output |
+endlegend
+
+@enduml

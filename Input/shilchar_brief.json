@@ -1,0 +1,53 @@
+{
+  "company_name": "Shilchar Technologies Ltd",
+  "business_description": "Core product: custom-engineered power and distribution transformers (5 KVA to 50 MVA, up to 132 kV), made to order for each customer project. Revenue ₹623 Cr FY25 — Domestic ~57% (renewable energy, industrial), Export ~43% (US, Europe, Middle East, 25+ countries). Customers: renewable energy project developers, EPC contractors, industrial manufacturers, and utility companies. EBITDA margins held at 30%+ even as revenues scaled 57% year-on-year, achieved partly by deliberately avoiding the margin-compressing PSU tender market. Recession behaviour: moderately cyclical, mitigated by India's policy-driven 500 GW renewable energy target, which creates government-mandated, relatively recession-resilient demand.",
+  "moat_evidence": [
+    "UL and CSA export certifications (a 12-18 month process) create genuine entry barriers to US and Canadian markets; an NABL-accredited testing lab is mandatory for type-testing certification. Source: Intangible Assets moat, rated Narrow and Widening.",
+    "30% EBITDA margin versus Voltamp (~21%) and Bharat Bijlee (~15%), confirmed by a 5-year trend and sustained through 57% revenue growth without equity dilution. Source: Low-Cost Production via niche discipline, rated Narrow and Widening.",
+    "Export vendor re-qualification takes 6-18 months; zero US order cancellations occurred even after a 50% US tariff was imposed, confirming customer stickiness. Source: Moderate Switching Costs.",
+    "No Network Effects and no Counter-Positioning were identified — the competitive advantage comes from execution and manufacturing focus, not structural disruption of incumbents.",
+    "Export revenue grew from 19% to 43% of total revenue over 4 years; the certification moat is expanding further with a new 220 kV product tier. Source: overall moat direction rated Widening."
+  ],
+  "growth_driver_evidence": {
+    "sales_marketing": "Marketing & sales investment remains reactive rather than proactive; winning 220 kV export approvals will require more proactive customer qualification, which is currently underdeveloped. Rated: untapped opportunity, not currently a strong driver.",
+    "distribution_channels": "No specific evidence of investment in new distribution channels beyond existing direct export relationships and EPC contractor partnerships.",
+    "geographic_expansion": "Active pivot from the US market (facing a tariff headwind) toward the Middle East and other new geographies; export revenue grew from 19% to 43% of total revenue over 4 years. Rated: Strong.",
+    "acquisitions": "No acquisitions identified; growth has been entirely organic and self-funded from internal accruals.",
+    "pricing_power": "Dollar-linked export contracts provide an automatic realisation uplift when the INR depreciates; EBITDA margins held at 30-31% through a 57% revenue surge. Rated: Strong.",
+    "new_products": "The Gavasad Expansion #3 project doubles manufacturing capacity to 14,000 MVA by April 2027 and adds a 220 kV product class, a higher-value tier with superior realisations; management targets ₹1,400-1,500 Cr revenue at full utilisation, roughly double the current run-rate. Rated: Strongest driver.",
+    "customer_retention": "Zero order cancellations after the 50% US tariff confirms customers are absorbing Shilchar's price premium rather than resisting it. Rated: Strong."
+  },
+  "risk_evidence": {
+    "concentration": "Top 5 domestic customers represented 62% of domestic sales in FY24, up sharply from approximately 45% in FY23; CARE Ratings flagged this concentration as a key rating constraint. Trend: worsening.",
+    "disruption": "Shilchar is a beneficiary of the energy transition rather than a victim of disruption — AI data centre buildout, renewable energy expansion, and grid upgradation all increase transformer demand. Trend: improving.",
+    "outside_forces": "CRGO steel, which is entirely imported with no domestic source, is 80-85% of raw material cost; a 50% US tariff is currently active; there is no forex hedging on the 43% of revenue that is export-derived, though this is partly mitigated by a back-to-back procurement model. Trend: stable.",
+    "competition": "The market is fragmented, with Voltamp, Bharat Bijlee, and other players expanding into the same higher-voltage (IDT) segment; Shilchar's 30% EBITDA margin premium over these peers suggests pricing power is intact for now. Trend: slowly intensifying."
+  },
+  "price_sentiment_narrative": "Over the trailing 12 months, the stock surged to an all-time high of ₹6,125 in June 2025 on record FY25 results (+57% revenue, +60% PAT), then fell 53% to ₹2,852 as US tariffs, a capacity ceiling, and small-cap de-rating combined, before recovering to approximately ₹5,016 by April 2026. Analyst sentiment is neutral with low confidence, reflecting minimal sell-side coverage; MarketsMojo downgraded the stock to Sell in October 2025. Institutional activity has been improving: domestic institutional investor (DII) holding tripled from 0.40% to 1.49% in a single quarter (Sep-Dec 2025) as the stock corrected. Bull case: a structural domestic tailwind (34.7 GW of renewable capacity added in 9M FY26 alone), the stock trading about 18% below its all-time high while earnings are still growing, and capacity doubling by April 2027. Bear case: revenue growth decelerated to 11% year-on-year in Q3 FY26, free cash flow was negative in FY25, and a roughly 31x P/E during a known capacity-constrained growth pause leaves little room for error.",
+  "ai_risk_evidence": {
+    "liability": "A transformer that fails due to incorrect specifications can destroy an entire industrial facility — the cost of an AI-driven design error is catastrophic, requiring physical testing and expert engineering oversight that AI cannot replace. Rated: anti-fragile.",
+    "business_model": "Revenue is project-based and priced per unit, not per user seat; if AI helps Shilchar design transformers faster, the company earns more from the same manufacturing capacity, not less. Rated: anti-fragile.",
+    "physical_world": "Transformers are physical hardware requiring manufacturing, on-site installation, and testing at the customer's job site; a pure software agent cannot substitute for this physical process. Rated: anti-fragile.",
+    "network": "There is no proprietary two-sided network effect, but customers cannot easily switch suppliers given certification requirements and long vendor qualification processes. Rated: robust (defensible but not a direct AI beneficiary)."
+  },
+  "valuation_scenarios": {
+    "bear": {
+      "probability": 0.25,
+      "assumption": "US tariff becomes permanent and peer over-capacity compresses margins to approximately 23%",
+      "fy_plus5_pat_cr": 160,
+      "exit_pe": 22
+    },
+    "base": {
+      "probability": 0.50,
+      "assumption": "Capacity expansion commissions on schedule, margins hold at 29-31%, export recovery begins from FY27",
+      "fy_plus5_pat_cr": 380,
+      "exit_pe": 24
+    },
+    "bull": {
+      "probability": 0.25,
+      "assumption": "220 kV product tier wins export approvals and Middle East expansion accelerates",
+      "fy_plus5_pat_cr": 520,
+      "exit_pe": 28
+    }
+  }
+}
