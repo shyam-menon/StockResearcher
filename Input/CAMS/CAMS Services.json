@@ -1,0 +1,52 @@
+{
+  "company_name": "Computer Age Management Services Limited",
+  "business_description": "The company is the market leader in the Registrar and Transfer Agency (RTA) business serving the mutual fund industry, deriving about 90% of its revenue from this activity, with an aggregate mutual fund market share of approximately 68% based on AAUM (67.6% specifically for MF Operations in FY25). Beyond MF services, the company operates through subsidiaries across: AIF/PMS services (CAMS WealthServ, serving 210+ fund houses / 520+ schemes with over ₹2.50 lakh crore AUM), Insurance Repository (CAMSRep, with LIC of India signing up in FY25 and dematerialised policies crossing 5 lakh), Payment Aggregation (CAMSPay, RBI Certificate of Registration issued), Account Aggregation (CAMS FIS, 8.25 crore customers linked, CAMSfinserv revenue +229% YoY with 11.6% LTD market share), KYC Registration (CAMS Investor Services, second-largest KRA, revenue of ₹45.4 Crore in FY25, +31% YoY), and Central Recordkeeping for NPS (eNPS ~9% market share, +82% YoY new non-Government subscriber onboarding). Evidence of pricing power/operating leverage: per the filing's Key Financial Ratios table, Operating Profit Margin rose from 38.22% (FY24) to 40.39% (FY25) and Net Profit Margin rose from 30.04% to 31.87%, even as consolidated revenue from operations grew 25.19% to ₹1,42,248 lakhs.",
+  "moat_evidence": [
+    "Switching Costs: 'has retained its leadership position right from its initial years and has been consistently growing' at ~68% AAUM share; the filing also notes 'significant wins made by the company of both new AMCs and migration of the existing AMC from the competitor during the financial year'.",
+    "Intangible Assets (regulatory licensing): RTAs are regulated by SEBI, which 'issues the certificate of Registration for eligible entities to operate'; RTAs serving more than 2 crore folios are designated Qualified Registrar and Transfer Agents (QRTA) with enhanced governance requirements, and 'the industry is dominated by three QRTAs and CAMS is one of the QRTAs operating in the country' — a regulatory barrier to entry.",
+    "Intangible Assets (brand/domain expertise): The filing states 'the Company's Brand salience and superior technology aligned with client business model continues to make CAMS the service partner of choice for the clients,' and cites 'domain expertise acquired over a three decades of being the industry partner, established processes, technology-driven infrastructure, and marquee clients' as an enabler for new business capture.",
+    "Scale/proprietary infrastructure: myCAMS, the company's mobile investing app, is described as 'the largest mobile app in the Mutual Fund arena with over 7.46 million registered users,' servicing ₹9.98 trillion of AUM as of March 31, 2025."
+  ],
+  "growth_driver_evidence": {
+    "sales_marketing": "Edge360 (distributor/advisor platform): 'Extensive marketing efforts and webinars helped gain momentum in new registrations, taking the overall registrations to over 90K.' CAMS KRA launched an 'Am I Validated?' investor-awareness campaign in March 2025 to enhance brand visibility.",
+    "distribution_channels": "Multiple digital distribution platforms disclosed: myCAMS (7.46 million registered users), GoCORP for institutional investors (~8,500 registered users, servicing ₹2.6 trillion, 16% of institutional AUM serviced), Edge360 (90K+ registrations, 34.72 lakh transactions in FY25), a revamped CAMServ chatbot, and digiLoan/LAMF (loan-against-mutual-funds via API).",
+    "geographic_expansion": "GIFT City operations expanded to '~30 clients outsourcing to CAMS GIFT City,' now covering both AIF services and fund administration for retail schemes. The company also 'won the first international mandate to the Registrar and Transfer Agent (RTA) for CeyBank, a leading Sri Lankan Asset Management company' during the year.",
+    "acquisitions": "Not disclosed in the provided filings — subsidiaries (Fintuple Technologies, Think Analytics, etc.) are listed as existing entities with no acquisition value-accretion discussion in this document. MFC Technologies Private Limited was newly incorporated (March 2025) as a 50%-owned joint venture, not an acquisition.",
+    "pricing_power": "Operating Profit Margin improved from 38.22% (FY24) to 40.39% (FY25) and Net Profit Margin from 30.04% to 31.87%, even as revenue from operations grew 25.19% — margin expansion during a period of rapid scaling.",
+    "new_products": "Bima Central (insurance portfolio management platform via CAMSRep), digiLoan/LAMF (loan against mutual funds), CAMS WealthServ (AIF/PMS digital onboarding, with '200+ sign-ups... completed'), a redesigned myCAMS app, an Online KYC Modification (Re-KYC) facility with DigiLocker validation, and the MFC Technologies joint venture for the MF Central platform.",
+    "customer_retention": "The company 'has retained its leadership position right from its initial years and has been consistently growing' at ~68% share. The FY25 investor satisfaction survey showed '96.23% of the customers rate the services of the company as very satisfied/Satisfied.'"
+  },
+  "risk_evidence": {
+    "concentration": "Explicitly disclosed: 'The Company's revenue is highly concentrated on the Mutual Fund industry and its few clients,' and separately, 'A significant part of the revenue is concentrated from MF Business. Within MF the revenue is concentrated within a group of top clients.' No explicit rising/falling trend is quantified, though the company states it is 'focusing on enhancing the non-MF revenue' as a stated mitigation.",
+    "disruption": "Technology Risk is disclosed: 'Inability to meet the demands of the Clients or adapt to the latest technological changes might affect the Company's business, as our success depends upon the development of technology platforms and applications to conduct our business.' No specific AI-related disruption commentary is present in this filing.",
+    "outside_forces": "Regulatory risk is explicitly disclosed: 'The competition and the regulatory restrictions may drive down total expense ratios, which in turn could drive down the fees that are paid by the clients to the Company,' alongside a general Regulatory & Compliance Risk that 'Non-compliance with any regulations could result in observations from the regulator and can lead to warnings and penalties.' No commodity, forex, interest-rate, or tariff exposure is disclosed. Mitigation cited: 'extensive management process and a process for identification of outliers on real-time basis.'",
+    "competition": "The filing states 'the industry is dominated by three QRTAs and CAMS is one of the QRTAs operating in the country,' without naming the other two competitors. No explicit statement on whether competitive intensity is rising or falling is provided, though the company notes it made 'significant wins... of both new AMCs and migration of the existing AMC from the competitor during the financial year.'"
+  },
+  "price_sentiment_narrative": "Not disclosed in the provided filings — the Management Discussion and Analysis does not address the share price, analyst coverage, or institutional sentiment.",
+  "ai_risk_evidence": {
+    "liability": "The filing identifies Operational Risk as 'error or omission that could lead to significant monetary and reputational losses,' and separately states 'Any failure in detecting errors or omissions in our business operations could expose us to potential losses' — indicating a high cost of error in a domain (investor records, transactions) that requires careful process oversight.",
+    "business_model": "About 90% of revenue derives from RTA services, described in terms of AUM and transaction volumes serviced (e.g., ₹45.59 lakh crore of AUM serviced, 892.11 million transactions valued at ₹186 lakh crore) rather than a per-seat or per-user licensing structure — consistent with a usage/volume-based revenue model, though the filing does not use that specific terminology.",
+    "physical_world": "Explicitly disclosed: 'The operations of the Company do not involve any manufacturing.' The business is described throughout as a 'technology-driven financial infrastructure and service provider.'",
+    "network": "The filing discloses proprietary platforms and data built over time: myCAMS (7.46 million registered users, ₹9.98 trillion AUM serviced), GoCORP (~8,500 institutional users), and 'domain expertise acquired over a three decades of being the industry partner.' The Account Aggregator business is explicitly built on 'securely share their financial data,' with CAMS holding 'more than 10%' market share described as an 'early mover' position."
+  },
+  "valuation_scenarios": {
+    "bear": {
+      "probability": 0.25,
+      "assumption": "The filing's own disclosed threat materializes — competition and regulatory restrictions 'drive down total expense ratios,' compressing MF fee revenue faster than non-MF businesses (AIF, CAMSRep, CAMSPay, AA, KRA) can offset, given revenue remains 'highly concentrated on the Mutual Fund industry and its few clients.'",
+      "fy_plus5_pat_cr": 730,
+      "exit_pe": 20
+    },
+    "base": {
+      "probability": 0.50,
+      "assumption": "Growth moderates from FY25's 25.19% pace but continues at a healthy rate as the disclosed non-MF growth areas (AIF/PMS at ₹2.50 lakh crore AUM, KRA +31% YoY, Account Aggregator +229% YoY, Insurance Repository onboarding LIC) continue scaling alongside steady MF industry AUM growth (which grew from ₹55.0 to ₹66.7 lakh crore in FY25 alone), consistent with the company's stated strategic priorities to strengthen MF leadership while scaling emerging businesses.",
+      "fy_plus5_pat_cr": 1050,
+      "exit_pe": 28
+    },
+    "bull": {
+      "probability": 0.25,
+      "assumption": "International expansion following the first RTA mandate win (CeyBank, Sri Lanka) and the GIFT City operations (~30 clients) scale meaningfully beyond India, while Account Aggregator, KRA, and Insurance Repository sustain 30%+ growth as seen in FY25, genuinely diversifying revenue away from the concentration risk the filing itself flags.",
+      "fy_plus5_pat_cr": 1450,
+      "exit_pe": 33
+    }
+  }
+}

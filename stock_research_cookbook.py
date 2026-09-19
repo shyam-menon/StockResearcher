@@ -502,19 +502,23 @@ def module_11_cash_flow(fd: FinancialData) -> dict:
     if fcf_latest < 0:
         red_flags.append("FCF negative in the latest year")
 
-    non_bonus_dilution = False
-    for i in range(max(1, len(fd.num_shares) - 3), len(fd.num_shares)):
-        # A share-count increase not accompanied by a same-year bonus issue implies real dilution.
-        # (Bonus share counts aren't tracked separately in this loader's series; flagged conservatively.)
-        if fd.num_shares[i] > fd.num_shares[i - 1]:
-            non_bonus_dilution = True
+    # A share-count increase can be a stock split or bonus issue (no dilution at all) rather
+    # than fresh equity issuance -- net those out via FinancialData.unexplained_share_increase_pct
+    # before treating a share-count rise as dilution evidence. 1% is a materiality floor so
+    # routine small ESOP exercises don't swamp the signal.
+    max_unexplained_increase = max(
+        (fd.unexplained_share_increase_pct(-i) for i in range(1, min(3, len(fd.num_shares) - 1) + 1)),
+        default=0.0,
+    )
+    material_dilution = max_unexplained_increase > 0.01
 
     state = {
         "capital_allocation_evidence": {
             "roic": fd.roic(),
             "cfo_to_pat_3yr_avg": cfo_pat_3yr,
             "fcf_latest": fcf_latest,
-            "share_count_increased_recently": non_bonus_dilution,
+            "unexplained_share_increase_3yr_pct": max_unexplained_increase,
+            "material_dilution": material_dilution,
             "is_debt_free": fd.is_debt_free(),
             "red_flags": red_flags,
         }

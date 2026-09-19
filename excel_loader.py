@@ -55,6 +55,8 @@ _BS_ROWS = {
     "inventory": 68,
     "cash_and_bank": 69,
     "num_equity_shares": 70,
+    "new_bonus_shares": 71,
+    "face_value_history": 72,
 }
 _CF_HEADER_ROW = 81
 _CF_ROWS = {
@@ -103,6 +105,8 @@ class FinancialData:
     net_block: list[float]
     cwip: list[float]
     num_shares: list[float]
+    new_bonus_shares: list[float]  # bonus shares issued that year, 0 if none
+    face_value_history: list[float]  # per-year face value; a drop signals a stock split
     current_price: float
     market_cap: float
     face_value: float
@@ -187,6 +191,27 @@ class FinancialData:
 
     def retained_earnings(self, idx: int = -1) -> float:
         return self.net_profit[idx] - self.dividend[idx]
+
+    def unexplained_share_increase_pct(self, idx: int = -1) -> float:
+        """Share-count growth NOT explained by a face-value split or a recorded bonus issue.
+
+        A stock split (face value drops, e.g. Rs 10 -> Rs 2) or a bonus issue can raise the
+        raw share count several-fold without diluting existing holders at all; a naive
+        "did share count go up" check would misread either as dilution. This nets both out
+        so what's left is genuine dilution (fresh equity issuance, ESOP exercises, etc.).
+        """
+        if len(self.num_shares) < abs(idx) + 1:
+            return 0.0
+        prior = self.num_shares[idx - 1]
+        if not prior:
+            return 0.0
+        split_ratio = 1.0
+        if self.face_value_history[idx] and self.face_value_history[idx - 1]:
+            split_ratio = self.face_value_history[idx - 1] / self.face_value_history[idx]
+        expected = prior * split_ratio + self.new_bonus_shares[idx]
+        if not expected:
+            return 0.0
+        return (self.num_shares[idx] - expected) / expected
 
     def consecutive_dividend_years(self) -> int:
         count = 0
@@ -301,6 +326,8 @@ def load_financials(xlsx_path: str | Path) -> FinancialData:
         net_block=net_block,
         cwip=cwip,
         num_shares=bs("num_equity_shares"),
+        new_bonus_shares=bs("new_bonus_shares"),
+        face_value_history=bs("face_value_history"),
         current_price=current_price,
         market_cap=market_cap,
         face_value=face_value,
