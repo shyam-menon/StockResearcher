@@ -36,6 +36,7 @@ class Brief:
     price_sentiment_narrative: str
     ai_risk_evidence: dict[str, str]
     valuation_scenarios: dict[str, dict]
+    ticker: str | None = None  # Yahoo Finance ticker symbol; used only when the Excel export is absent
 
 
 def load_brief(json_path: str | Path) -> Brief:
@@ -80,4 +81,5 @@ def load_brief(json_path: str | Path) -> Brief:
         price_sentiment_narrative=data["price_sentiment_narrative"],
         ai_risk_evidence=data["ai_risk_evidence"],
         valuation_scenarios=data["valuation_scenarios"],
+        ticker=data.get("ticker"),
     )

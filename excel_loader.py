@@ -110,6 +110,9 @@ class FinancialData:
     current_price: float
     market_cap: float
     face_value: float
+    currency_symbol: str = "₹"
+    unit_label: str = "Cr"
+    unit_divisor: float = 1e7  # multiplier to recover absolute currency from a stored series value
 
     # -- helpers -------------------------------------------------------
     def _avg(self, series: list[float], idx: int = -1) -> float:
@@ -237,7 +240,7 @@ class FinancialData:
         return self.net_profit[idx] > self.net_profit[idx - 1]
 
     def eps(self, idx: int = -1) -> float:
-        return self.net_profit[idx] * 1e7 / self.num_shares[idx]  # net_profit is in Cr
+        return self.net_profit[idx] * self.unit_divisor / self.num_shares[idx]
 
     def pe_ratio(self, idx: int = -1) -> float | None:
         eps = self.eps(idx)

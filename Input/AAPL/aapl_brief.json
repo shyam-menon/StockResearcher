@@ -1,0 +1,37 @@
+{
+  "company_name": "Apple Inc.",
+  "ticker": "AAPL",
+  "business_description": "Apple designs, manufactures, and sells smartphones (iPhone), personal computers (Mac), tablets (iPad), wearables (Watch, AirPods), and a growing Services segment (App Store, Music, iCloud, AppleCare, advertising, and payments). Revenue is global, with the Americas, Europe, Greater China, Japan, and Rest of Asia Pacific as reported segments. Gross margins have held in the low-to-mid 40s% through periods of component cost inflation, and Services margins are structurally higher than Products margins, evidencing pricing power and a growing high-margin mix.",
+  "moat_evidence": [
+    "Intangible assets: Apple's brand and iOS/App Store ecosystem allow premium pricing versus commodity Android hardware at comparable specs.",
+    "Switching costs: the integrated hardware/software/services ecosystem (iMessage, iCloud, Handoff, Family Sharing) raises the cost of switching away from Apple devices once a household is on the platform.",
+    "Network effects: the size of the iOS installed base sustains a large third-party developer ecosystem on the App Store, which in turn reinforces the value of the platform to users."
+  ],
+  "growth_driver_evidence": {
+    "sales_marketing": "Apple invests heavily in retail stores and marketing campaigns tied to annual product launches.",
+    "distribution_channels": "Expansion of Apple-owned retail and online stores alongside carrier and third-party retail partnerships in most major markets.",
+    "geographic_expansion": "Continued investment in India and other emerging markets as a next leg of iPhone unit growth beyond mature Western markets.",
+    "acquisitions": "Not disclosed in the provided filings.",
+    "pricing_power": "Gross margin has held up through cost inflation cycles, and iPhone average selling prices have risen with the Pro/Pro Max mix shift.",
+    "new_products": "Services segment (subscriptions, App Store, advertising) and wearables have both scaled meaningfully as additions to the core iPhone franchise.",
+    "customer_retention": "High reported iPhone upgrader loyalty rates and a large, growing active installed device base are cited as evidence of retention."
+  },
+  "risk_evidence": {
+    "concentration": "iPhone remains the largest single product-line contributor to revenue, concentrating results in one product cycle.",
+    "disruption": "Long-run smartphone unit growth has slowed industry-wide as replacement cycles lengthen; AI-driven device form factors are an emerging uncertainty.",
+    "outside_forces": "Exposure to China (both as a market and as a manufacturing base), global tariff policy, and foreign-exchange translation on international revenue.",
+    "competition": "Faces Android OEMs (Samsung, Chinese manufacturers) in hardware and multiple platforms in services/advertising; has historically maintained premium share and margins versus these competitors."
+  },
+  "price_sentiment_narrative": "Not disclosed in the provided filings.",
+  "ai_risk_evidence": {
+    "liability": "Consumer hardware/software errors are generally low-stakes and correctable via updates, not safety-critical.",
+    "business_model": "Revenue is unit- and subscription-based (device sales plus Services subscriptions), not seat-based, so it is not directly exposed to AI-driven headcount reduction at customers.",
+    "physical_world": "Core business requires physical hardware manufacturing and a global supply chain, not purely digital delivery.",
+    "network": "Holds a large proprietary installed-base/developer-ecosystem network effect (App Store) that would be difficult for an AI entrant to replicate quickly."
+  },
+  "valuation_scenarios": {
+    "bear": {"probability": 0.25, "assumption": "PAT grows ~5%/yr (below the ~9-13%/yr sell-side 5yr EPS growth consensus as of Sep 2026) on iPhone/Services deceleration and regulatory pressure on App Store economics; multiple compresses to 20x on growth disappointment", "fy_plus5_pat_cr": 143000, "exit_pe": 20},
+    "base": {"probability": 0.5, "assumption": "PAT grows ~10.5%/yr, the midpoint of sell-side 5yr EPS growth consensus (~9-13%/yr, GuruFocus/Finbox as of Sep 2026); exit multiple normalizes to 28x, below today's ~33-36x forward P/E but still a premium multiple reflecting the Services mix shift", "fy_plus5_pat_cr": 184660, "exit_pe": 28},
+    "bull": {"probability": 0.25, "assumption": "PAT grows ~15%/yr on a new device category and accelerating Services/AI monetization; today's elevated ~34x forward multiple holds rather than compressing", "fy_plus5_pat_cr": 225289, "exit_pe": 34}
+  }
+}

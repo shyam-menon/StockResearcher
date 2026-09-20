@@ -1,5 +1,5 @@
 @startuml StockResearchCookbookArchitecture
-title Stock Research Framework Cookbook — Excel + Brief JSON + TypeSafe AI + Code
+title Stock Research Framework Cookbook — Excel/Online + Brief JSON + TypeSafe AI + Code
 
 skinparam rectangle {
   BackgroundColor<<code>> #E6F4EA
@@ -14,17 +14,28 @@ skinparam rectangle {
 
 database "Excel export\n(<company>.xlsx,\nscreener.in template)" as ExcelFile
 database "Brief JSON\n(<company>_brief.json)" as BriefFile
+cloud "Yahoo Finance\n(yfinance)" as YFinance
 
 rectangle "excel_loader.py\n(raw P&L / balance sheet /\ncash flow -> ratios)" as ExcelLoader
 rectangle "brief_schema.py\n(load + validate)" as BriefLoader
+rectangle "online_loader.py\n(fallback: fetch by ticker\nwhen .xlsx is absent)" as OnlineLoader
 
-rectangle "FinancialData\nSales, PAT, CFO, ROE,\nROCE, ROIC, DSO, ..." as FD
-rectangle "Brief\nbusiness desc, moat,\nrisk, sentiment, AI-risk,\nvaluation scenarios" as Brief
+rectangle "FinancialData\nSales, PAT, CFO, ROE,\nROCE, ROIC, DSO, ...\n(+ currency/unit fields)" as FD
+rectangle "Brief\nbusiness desc, moat,\nrisk, sentiment, AI-risk,\nvaluation scenarios,\nticker" as Brief
 
 ExcelFile --> ExcelLoader
 BriefFile --> BriefLoader
 ExcelLoader --> FD
 BriefLoader --> Brief
+YFinance --> OnlineLoader
+OnlineLoader --> FD
+Brief --> OnlineLoader : ticker
+
+note bottom of OnlineLoader
+  Used only when
+  <company>.xlsx is
+  missing from Input\<Company>\
+end note
 
 cloud "TypeSafe API\nsystem_one (model jev-1.13.0)\nNoul / Choice / Score" as TS
 database "stock_cache.json\n(content-addressed cache)" as Cache

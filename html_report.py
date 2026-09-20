@@ -151,7 +151,7 @@ def render_html(
             + [("Overall", _badge(ai_risk["overall"]))],
         ),
         _section("10 &middot; Balance Sheet Analysis", [
-            ("Net cash", f"{balance_sheet['net_cash_cr']:,.2f} Cr"),
+            ("Net cash", f"{balance_sheet['net_cash_cr']:,.2f} {fd.unit_label}"),
             ("Leverage", _badge(balance_sheet["leverage_rating"])),
             ("ROE / ROCE / ROIC", f"{balance_sheet['roe']:.1%} / {balance_sheet['roce']:.1%} / {balance_sheet['roic']:.1%}"),
             ("Returns rating", _badge(balance_sheet["returns_rating"])),
@@ -165,7 +165,7 @@ def render_html(
             "11 &middot; Cash Flow Analysis",
             [
                 ("CFO/PAT latest / 3yr avg", f"{cash_flow['cfo_to_pat_latest']:.2f}x / {cash_flow['cfo_to_pat_3yr_avg']:.2f}x"),
-                ("FCF (latest)", f"{cash_flow['fcf_latest']:,.2f} Cr"),
+                ("FCF (latest)", f"{cash_flow['fcf_latest']:,.2f} {fd.unit_label}"),
                 ("Red flags", _list(cash_flow["red_flags"])),
                 ("Capital allocation grade",
                  f"{_badge(cash_flow['capital_allocation_grade'])} <span class='note'>"
@@ -183,9 +183,10 @@ def render_html(
         ]),
         _section(
             "13 &middot; Reverse Valuation",
-            [("Current price / P/E", f"₹{valuation['current_price']:,.2f} / {valuation['current_pe']:.1f}x")]
+            [("Current price / P/E", f"{fd.currency_symbol}{valuation['current_price']:,.2f} / {valuation['current_pe']:.1f}x")]
             + [
-                (f"{name.capitalize()} (p={s['probability']:.0%})", f"target ₹{s['future_price']:,.0f} &rarr; {s['cagr']:.1%} CAGR")
+                (f"{name.capitalize()} (p={s['probability']:.0%})",
+                 f"target {fd.currency_symbol}{s['future_price']:,.0f} &rarr; {s['cagr']:.1%} CAGR")
                 for name, s in valuation["scenarios"].items()
             ]
             + [
@@ -193,7 +194,9 @@ def render_html(
                  f"{valuation['probability_weighted_cagr']:.1%} (meets 12% hurdle: {_fmt(valuation['meets_hurdle'])})"),
                 ("Margin of safety",
                  _badge_as(valuation["margin_of_safety"], {"Low": "bad", "Moderate": "warn", "High": "good"})),
-                ("Entry zone", html.escape(", ".join(f"{k.replace('pct_cagr', '%')}: ₹{v:,.0f}" for k, v in valuation["entry_zone"].items()))),
+                ("Entry zone", html.escape(", ".join(
+                    f"{k.replace('pct_cagr', '%')}: {fd.currency_symbol}{v:,.0f}" for k, v in valuation["entry_zone"].items()
+                ))),
             ],
         ),
         _section("14 &middot; Investment Decision", [
@@ -269,8 +272,8 @@ def render_html(
 <div class="wrap">
   <header>
     <h1>{html.escape(company)}</h1>
-    <div class="meta">Latest fiscal year end: {fd.latest_year:%Y-%m-%d} &middot; CMP: ₹{fd.current_price:,.2f} &middot;
-      Market cap: {fd.market_cap:,.2f} Cr</div>
+    <div class="meta">Latest fiscal year end: {fd.latest_year:%Y-%m-%d} &middot; CMP: {fd.currency_symbol}{fd.current_price:,.2f} &middot;
+      Market cap: {fd.market_cap:,.2f} {fd.unit_label}</div>
   </header>
 
   <div class="thesis">

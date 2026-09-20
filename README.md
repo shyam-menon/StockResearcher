@@ -6,7 +6,10 @@ over any stock, given two inputs per company:
 1. **A screener.in Excel export** in the "Dr. Vijay Malik Screener Excel Template" shape
    (`Data Sheet` + `Dr Vijay Malik Analysis` tabs). Fully numeric, fully reusable —
    drop in a different company's export and every ratio recomputes automatically.
-   No code changes needed.
+   No code changes needed. screener.in only covers Indian-listed companies; if the
+   Excel export isn't present for a company, the tool automatically falls back to
+   fetching financials from Yahoo Finance instead (`online_loader.py`) — see
+   "Running it" below.
 2. **A qualitative brief JSON** — business description, moat evidence, growth-driver
    evidence, risk narrative, price/sentiment narrative, AI-risk evidence, and
    valuation-scenario assumptions. The Excel has no text in it, and the framework
@@ -123,6 +126,23 @@ Results are cached to `stock_cache.json`, keyed by the exact content of the Exce
 figures and brief text passed to each call — a different company or an edited brief
 produces a fresh cache entry automatically; nothing needs to be cleared by hand.
 
+### Companies without a screener.in export (e.g. non-Indian companies)
+
+If `Input\<Company>\<Company>.xlsx` doesn't exist, the tool automatically fetches
+financials from Yahoo Finance instead (`online_loader.py`, via the `yfinance`
+package — `pip install yfinance`), using the `"ticker"` field in that company's
+brief JSON (e.g. `"AAPL"`, `"RELIANCE.NS"`). Still pass the (non-existent) `.xlsx`
+path on the command line as usual — it's only used to name the matching
+`Output\<Company>\` folder:
+
+```bash
+.venv\Scripts\python.exe stock_research_cookbook.py "Input\AAPL\AAPL.xlsx" "Input\AAPL\aapl_brief.json"
+```
+
+Figures fetched this way are reported in the company's own currency and in
+millions rather than screener.in's Rupee-Crore convention (`FinancialData.currency_symbol`
+/ `unit_label` reflect this automatically in both the console and HTML output).
+
 On Windows, run with `PYTHONUTF8=1` set (e.g. `PYTHONUTF8=1 .venv\Scripts\python.exe ...`
 from Git Bash) — the brief text contains ₹ symbols, and Python's default file/console
 encoding on Windows isn't UTF-8 unless this is set.
@@ -147,6 +167,10 @@ no prose before or after the JSON):
 
 {
   "company_name": "<full legal or trading name as it appears in the filings>",
+  "ticker": "<exchange ticker symbol as recognized by Yahoo Finance, e.g. AAPL,
+    RELIANCE.NS. Best-effort/optional -- include it when you can tell from the
+    filings, but it is only actually required when no screener.in Excel export
+    accompanies this brief (the tool then fetches financials online using it)>",
   "business_description": "<what the company sells, who buys it, how revenue is split
     by segment/geography, and any evidence of pricing power (e.g. margins holding or
     improving through a period of cost inflation or rapid scaling)>",
@@ -197,7 +221,7 @@ no prose before or after the JSON):
   },
   "valuation_scenarios": {
     "bear": {"probability": <0-1>, "assumption": "<what has to go wrong>",
-      "fy_plus5_pat_cr": <number, PAT in Cr 5 years out>, "exit_pe": <number>},
+      "fy_plus5_pat_cr": <number, PAT 5 years out>, "exit_pe": <number>},
     "base": {"probability": <0-1>, "assumption": "<the base case path>",
       "fy_plus5_pat_cr": <number>, "exit_pe": <number>},
     "bull": {"probability": <0-1>, "assumption": "<what has to go right>",
@@ -209,6 +233,10 @@ Important: `valuation_scenarios` is forward-looking analyst judgment, not someth
 extractable from historical filings — use your own reasoned 5-year PAT and exit-P/E
 assumptions per scenario (grounded in the filings' disclosed growth plans, capacity
 expansions, and margin trends), and make sure the three probabilities sum to 1.0.
+Despite the field's name, `fy_plus5_pat_cr` should be expressed in whatever unit
+the company's numbers are reported in by this pipeline -- Cr for a screener.in/India
+company, millions for a company fetched via the Yahoo Finance fallback (see
+"Running it" above).
 ````
 
 ## Known limitations
@@ -229,3 +257,13 @@ expansions, and margin trends), and make sure the three probabilities sum to 1.0
   as neutral in `_business_quality_score` (`risk_points = 2`, same as Medium), so a
   stock with too little risk evidence to rate isn't penalized or rewarded relative to
   a known-Medium-risk stock.
+- The Yahoo Finance fallback (`online_loader.py`) typically only returns ~4 annual
+  periods of financials vs. screener.in's up to 10 — 3-year CAGR/average figures sit
+  right at the edge of what's available for a freshly-fetched company. It also relies
+  on `yfinance`, an unofficial library that scrapes Yahoo Finance and can break when
+  Yahoo changes its backend; a company with no populated statements raises a clear
+  `ValueError` rather than silently producing an empty report. Dividend and bonus/
+  split-issue data are thinner than screener.in's — dividends come from the cash-flow
+  statement's aggregate payout rather than a per-share figure, and share counts are
+  Yahoo's already split-adjusted series (unlike screener.in's as-filed figures), so
+  no separate split/bonus correction is applied or needed.

@@ -28,6 +28,7 @@ from typesafe_sdk import Choice, ChoiceAnswer, Noul, NoulAnswer, Score, TypeSafe
 from brief_schema import Brief, load_brief
 from excel_loader import FinancialData, load_financials
 from html_report import render_html, _slugify
+from online_loader import load_financials_online
 
 load_dotenv()
 
@@ -708,8 +709,8 @@ def module_13_reverse_valuation(fd: FinancialData, brief: Brief) -> dict:
     scenarios = {}
     weighted_cagr = 0.0
     for name, s in brief.valuation_scenarios.items():
-        future_pat_cr = s["fy_plus5_pat_cr"]
-        future_eps = future_pat_cr * 1e7 / shares
+        future_pat_cr = s["fy_plus5_pat_cr"]  # expressed in fd.unit_label units (Cr for Excel/India, M for online)
+        future_eps = future_pat_cr * fd.unit_divisor / shares
         future_price = future_eps * s["exit_pe"]
         cagr = (future_price / current_price) ** (1 / 5) - 1
         scenarios[name] = {"future_price": future_price, "cagr": cagr, "probability": s["probability"]}
@@ -765,7 +766,7 @@ def _financial_quality_score(metrics: dict, balance_sheet: dict, cash_flow: dict
 def module_14_decision(
     phase: dict, moat: dict, growth: dict, metrics: dict, risk: dict,
     balance_sheet: dict, cash_flow: dict, roic_runway: dict, valuation: dict, ai_risk: dict,
-    company_name: str,
+    company_name: str, currency_symbol: str = "₹",
 ) -> dict:
     business_quality = _business_quality_score(moat, growth, risk, ai_risk)
     financial_quality = _financial_quality_score(metrics, balance_sheet, cash_flow)
@@ -796,7 +797,7 @@ def module_14_decision(
         f"{company_name} is a Phase {phase['phase']} ({phase['phase_name']}) business with a "
         f"{moat['size']}/{moat['direction']} moat and {risk['overall']}-risk profile, offering a "
         f"{valuation['probability_weighted_cagr']:.1%} probability-weighted base CAGR at "
-        f"₹{valuation['current_price']:.0f} — verdict: {decision}, with {valuation['margin_of_safety']} margin of safety."
+        f"{currency_symbol}{valuation['current_price']:.0f} — verdict: {decision}, with {valuation['margin_of_safety']} margin of safety."
     )
 
     return {
@@ -818,13 +819,21 @@ def _section(title: str) -> None:
 
 
 def main(xlsx_path: str, brief_path: str) -> None:
-    fd = load_financials(xlsx_path)
     brief = load_brief(brief_path)
+    if Path(xlsx_path).exists():
+        fd = load_financials(xlsx_path)
+    else:
+        if not brief.ticker:
+            raise ValueError(
+                f'{xlsx_path} not found, and {brief_path} has no "ticker" field to fetch financials online instead.'
+            )
+        print(f"{xlsx_path} not found; fetching financials online for ticker {brief.ticker!r}...")
+        fd = load_financials_online(brief.ticker)
     company = fd.company_name
 
     print(f"STOCK RESEARCH FRAMEWORK — {company}")
     print(f"Latest fiscal year end: {fd.latest_year:%Y-%m-%d}  |  CMP: {fd.current_price:,.2f}  |  "
-          f"Market cap: {fd.market_cap:,.2f} Cr")
+          f"Market cap: {fd.market_cap:,.2f} {fd.unit_label}")
 
     _section("Module 01 — Business Phase Analysis")
     phase = module_01_phase(fd)
@@ -885,7 +894,7 @@ def main(xlsx_path: str, brief_path: str) -> None:
 
     _section("Module 10 — Balance Sheet Analysis")
     balance_sheet = module_10_balance_sheet(fd)
-    print(f"Net cash: {balance_sheet['net_cash_cr']:,.2f} Cr  |  Leverage: {balance_sheet['leverage_rating']}")
+    print(f"Net cash: {balance_sheet['net_cash_cr']:,.2f} {fd.unit_label}  |  Leverage: {balance_sheet['leverage_rating']}")
     print(f"ROE: {balance_sheet['roe']:.1%}  ROCE: {balance_sheet['roce']:.1%}  ROIC: {balance_sheet['roic']:.1%} "
           f"-> Returns: {balance_sheet['returns_rating']}")
     print(f"Receivable days: {balance_sheet['receivable_days_prior']:.0f} -> {balance_sheet['receivable_days_latest']:.0f} "
@@ -896,7 +905,7 @@ def main(xlsx_path: str, brief_path: str) -> None:
     _section("Module 11 — Cash Flow Analysis")
     cash_flow = module_11_cash_flow(fd)
     print(f"CFO/PAT (latest): {cash_flow['cfo_to_pat_latest']:.2f}x  |  3yr avg: {cash_flow['cfo_to_pat_3yr_avg']:.2f}x")
-    print(f"FCF (latest): {cash_flow['fcf_latest']:,.2f} Cr")
+    print(f"FCF (latest): {cash_flow['fcf_latest']:,.2f} {fd.unit_label}")
     print(f"Red flags: {cash_flow['red_flags'] or 'None'}")
     print(f"Capital allocation grade: {cash_flow['capital_allocation_grade']} "
           f"(score={cash_flow['capital_allocation_grade_raw_score']:.2f}/{cash_flow['capital_allocation_grade_max_score']})")
@@ -926,6 +935,7 @@ def main(xlsx_path: str, brief_path: str) -> None:
     _section("Module 14 — Investment Decision")
     decision = module_14_decision(
         phase, moat, growth, metrics, risk, balance_sheet, cash_flow, roic_runway, valuation, ai_risk, company,
+        currency_symbol=fd.currency_symbol,
     )
     print(f"Business Quality: {decision['business_quality']}/10  |  Financial Quality: "
           f"{decision['financial_quality']}/10  |  Valuation: {decision['valuation_verdict']}")
