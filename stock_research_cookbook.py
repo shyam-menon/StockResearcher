@@ -148,17 +148,29 @@ def module_01_phase(fd: FinancialData) -> dict:
 # Module 02 — Business Analysis (TypeSafe)
 # --------------------------------------------------------------------------
 
+# Shared with html_report.py so the report can show the one-line definition of
+# whichever label got picked, not just the bare badge -- these categories are
+# narrower than they sound (e.g. "Project-based repeat" means discrete, bespoke
+# projects like systems integration or custom engineering, not just "not a
+# subscription"), so the badge alone isn't self-explanatory to a reader.
+REVENUE_PATTERN_CRITERIA = {
+    "Recurring": "Customers buy repeatedly / revenue is subscription- or repeat-order-like.",
+    "OneTime": "Each sale is largely a one-off purchase with no built-in repeat cadence.",
+    "Project-based repeat": "Each sale is a discrete, bespoke project (e.g. systems integration, "
+        "capital equipment, custom engineering) -- not a catalog product -- but the same customers "
+        "commission repeat projects over time.",
+    "Mixed": "A genuine blend of recurring/repeat-purchase revenue (subscriptions, consumables, "
+        "contracted renewals) and one-off product sales, with neither clearly dominant.",
+}
+
+
 def module_02_business(brief: Brief) -> dict:
     state = {"business_description": brief.business_description}
     questions = {
         "revenue_pattern": {
             "kind": "choice",
             "instructions": "Is the company's revenue recurring/repeat business, or predominantly one-time purchases?",
-            "criteria": {
-                "Recurring": "Customers buy repeatedly / revenue is subscription- or repeat-order-like.",
-                "OneTime": "Each sale is largely a one-off purchase with no built-in repeat cadence.",
-                "Project-based repeat": "Individual sales are one-off projects, but the same customers place repeat orders over time.",
-            },
+            "criteria": REVENUE_PATTERN_CRITERIA,
         },
         "pricing_power": {
             "kind": "noul",
@@ -180,6 +192,7 @@ def module_02_business(brief: Brief) -> dict:
     return {
         "revenue_pattern": revenue_pattern,
         "revenue_pattern_confidence": revenue_pattern_confidence,
+        "revenue_pattern_definition": REVENUE_PATTERN_CRITERIA[revenue_pattern],
         "has_pricing_power": noul_yes(result["pricing_power"]),
         "pricing_power_p_yes": result["pricing_power"]["p_yes"],
         "recession_behavior": recession_behavior,
@@ -843,8 +856,9 @@ def main(xlsx_path: str, brief_path: str) -> None:
 
     _section("Module 02 — Business Analysis")
     business = module_02_business(brief)
-    print(f"Revenue pattern: {business['revenue_pattern']} (p={business['revenue_pattern_confidence']:.2f})  |  "
-          f"Pricing power evidenced: {business['has_pricing_power']} (p={business['pricing_power_p_yes']:.2f})  |  "
+    print(f"Revenue pattern: {business['revenue_pattern']} (p={business['revenue_pattern_confidence']:.2f}) -- "
+          f"{business['revenue_pattern_definition']}")
+    print(f"Pricing power evidenced: {business['has_pricing_power']} (p={business['pricing_power_p_yes']:.2f})  |  "
           f"Recession behavior: {business['recession_behavior']} (p={business['recession_behavior_confidence']:.2f})")
 
     _section("Module 03 — Moat Analysis")

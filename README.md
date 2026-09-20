@@ -47,7 +47,7 @@ Noul fits these because each is a standalone yes/no judgment with no need to
 compare against sibling options.
 
 **`Choice` (pick one of a defined set) — 23 questions, 8 modules — the workhorse**
-- Module 02: `revenue_pattern` (Recurring/OneTime/Project-based repeat),
+- Module 02: `revenue_pattern` (Recurring/OneTime/Project-based repeat/Mixed),
   `recession_behavior` (Cyclical/Resilient/ModeratelyCyclical)
 - Module 03: `size` (None/Narrow/Wide), `direction` (Widening/Stable/Narrowing)
 - Module 04 (Growth Drivers): one Choice per driver, 7 total — Strong/Moderate/

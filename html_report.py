@@ -93,7 +93,7 @@ def render_html(
             ("Revenue pattern", _badge_p(business["revenue_pattern"], business["revenue_pattern_confidence"])),
             ("Pricing power evidenced", f"{_fmt(business['has_pricing_power'])} <span class='note'>(p={business['pricing_power_p_yes']:.2f})</span>"),
             ("Recession behavior", _badge_p(business["recession_behavior"], business["recession_behavior_confidence"])),
-        ]),
+        ], extra=f'<p class="note">{html.escape(business["revenue_pattern_definition"])}</p>'),
         _section(
             "03 &middot; Moat Analysis",
             [

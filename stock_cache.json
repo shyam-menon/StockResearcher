@@ -481,6 +481,29 @@
       "score": 3.83
     }
   },
+  "531fd25e4d0ad6963e0df5608a389a3ddba3dbeb6148195daf877d8af9abe2f9": {
+    "pricing_power": {
+      "kind": "noul",
+      "p_yes": 0.14
+    },
+    "recession_behavior": {
+      "kind": "choice",
+      "probabilities": {
+        "ModeratelyCyclical": 0.34,
+        "Cyclical": 0.66,
+        "Resilient": 0.0
+      }
+    },
+    "revenue_pattern": {
+      "kind": "choice",
+      "probabilities": {
+        "Mixed": 0.84,
+        "Project-based repeat": 0.0,
+        "Recurring": 0.01,
+        "OneTime": 0.15
+      }
+    }
+  },
   "546929398dd16b2b46b907e3e0d3ef34084f595e16509c744d9e52446788f8ca": {
     "verdict": {
       "kind": "choice",
@@ -529,6 +552,29 @@
         "Recurring": 0.0,
         "Project-based repeat": 0.75,
         "OneTime": 0.25
+      }
+    }
+  },
+  "62cd213f978cc1bf631378c8aa9ec6a4f128d48eee08dc7ef66eff9fa7148271": {
+    "pricing_power": {
+      "kind": "noul",
+      "p_yes": 0.05
+    },
+    "recession_behavior": {
+      "kind": "choice",
+      "probabilities": {
+        "ModeratelyCyclical": 0.74,
+        "Cyclical": 0.18,
+        "Resilient": 0.08
+      }
+    },
+    "revenue_pattern": {
+      "kind": "choice",
+      "probabilities": {
+        "Project-based repeat": 0.0,
+        "OneTime": 0.0,
+        "Mixed": 0.01,
+        "Recurring": 0.99
       }
     }
   },
@@ -1041,6 +1087,29 @@
         "Short": 0.02,
         "Medium": 0.42,
         "Long": 0.56
+      }
+    }
+  },
+  "b4c53c1577b8233f8ab1a53e16fe82171921c2c50c3a208a091cf42347f8293b": {
+    "pricing_power": {
+      "kind": "noul",
+      "p_yes": 0.93
+    },
+    "recession_behavior": {
+      "kind": "choice",
+      "probabilities": {
+        "Resilient": 0.09,
+        "Cyclical": 0.01,
+        "ModeratelyCyclical": 0.9
+      }
+    },
+    "revenue_pattern": {
+      "kind": "choice",
+      "probabilities": {
+        "Project-based repeat": 0.0,
+        "Mixed": 0.98,
+        "Recurring": 0.0,
+        "OneTime": 0.02
       }
     }
   },
