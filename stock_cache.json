@@ -286,6 +286,12 @@
       "score": 2.0
     }
   },
+  "1b5eb9f2bc55d4d13dd586ff82e029b7fa66443dc4ba9c70e62cea86f541a048": {
+    "capital_allocation_grade": {
+      "kind": "score",
+      "score": 2.25
+    }
+  },
   "1db0b52d17661c99f192941612aac5290354026b5794909eee58174278b3791f": {
     "verdict": {
       "kind": "choice",
@@ -367,6 +373,17 @@
     "capital_allocation_grade": {
       "kind": "score",
       "score": 1.03
+    }
+  },
+  "3fb510800b5ef317645fe1662d6b2fccd1cf16a0ef2f1953645559d5a6ae77dd": {
+    "verdict": {
+      "kind": "choice",
+      "probabilities": {
+        "Strong": 0.1,
+        "Stressed": 0.38,
+        "VeryStrong": 0.0,
+        "Adequate": 0.52
+      }
     }
   },
   "431db2d677d34af30f1cc26b6140362c9f68a473257a3ed1e68ee55c0f452154": {
@@ -1010,6 +1027,16 @@
       "score": 1.76
     }
   },
+  "ace9776c8b67d6812b5adb497dfd0f97eac70016278e04c936b6a362fff8eec9": {
+    "runway": {
+      "kind": "choice",
+      "probabilities": {
+        "Short": 0.01,
+        "Medium": 0.43,
+        "Long": 0.56
+      }
+    }
+  },
   "adab170aa1d72c38e523caab4ea720b9515899c2206166bf0b59003ed4aeb344": {
     "direction": {
       "kind": "choice",
@@ -1269,6 +1296,16 @@
         "Narrow": 0.85,
         "Wide": 0.15,
         "None": 0.0
+      }
+    }
+  },
+  "c794bd20daed79cc027ad53b058fdf22a8279ac564a6e964d004cf0e343c5c2f": {
+    "runway": {
+      "kind": "choice",
+      "probabilities": {
+        "Medium": 0.02,
+        "Short": 0.97,
+        "Long": 0.01
       }
     }
   },
@@ -1587,6 +1624,17 @@
         "Recurring": 1.0,
         "OneTime": 0.0,
         "Project-based repeat": 0.0
+      }
+    }
+  },
+  "ff62f691d230a2a3b98b6c331bf9d889b8aaa3b565e5802ad3b85291d875f198": {
+    "verdict": {
+      "kind": "choice",
+      "probabilities": {
+        "Adequate": 0.27,
+        "Strong": 0.22,
+        "VeryStrong": 0.0,
+        "Stressed": 0.51
       }
     }
   }

@@ -74,11 +74,31 @@ def load_financials_online(ticker: str) -> FinancialData:
     depreciation = _row(income, periods, "Reconciled Depreciation")
     if not any(depreciation):
         depreciation = _row(cash, periods, "Depreciation And Amortization")
-    ebit = _row(income, periods, "EBIT")
+    # "Total Operating Income As Reported" is the company's own reported operating
+    # income (ties exactly to what's in its filings). yfinance's own "EBIT" row is a
+    # synthetic Pretax Income + Interest Expense reconstruction that drifts from the
+    # real figure whenever "other income/expense" isn't zero -- prefer the reported
+    # line, and only fall back to the synthetic ones when it's missing.
+    operating_income = _row(income, periods, "Total Operating Income As Reported")
+    ebit = operating_income if any(operating_income) else _row(income, periods, "EBIT")
     if not any(ebit):
         ebit = [p_ + i for p_, i in zip(pbt, interest)]
 
     net_block = _row(balance, periods, "Net PPE")
+
+    # yfinance's "Total Debt" also folds in capitalized finance/operating lease
+    # obligations, which most companies (and this framework's other debt-based
+    # ratios/thresholds) don't count as "debt" -- prefer summing the traditional
+    # current + long-term borrowings lines, which tie to what a company reports as
+    # its own "total debt", and only fall back to the lease-inclusive figure when
+    # those aren't available.
+    current_debt = _row(balance, periods, "Current Debt")
+    long_term_debt = _row(balance, periods, "Long Term Debt")
+    debt = (
+        [c + l for c, l in zip(current_debt, long_term_debt)]
+        if any(current_debt) or any(long_term_debt)
+        else _row(balance, periods, "Total Debt")
+    )
 
     # Unlike screener.in's as-filed share counts (which need face_value_history to
     # net out splits/bonus issues in unexplained_share_increase_pct), yfinance's
@@ -103,13 +123,17 @@ def load_financials_online(ticker: str) -> FinancialData:
         interest=interest,
         depreciation=depreciation,
         other_income=_row(income, periods, "Other Income Expense", "Other Non Operating Income Expenses"),
-        operating_profit=_row(income, periods, "Operating Income"),
+        operating_profit=operating_income if any(operating_income) else _row(income, periods, "Operating Income"),
         ebit=ebit,
         cfo=_row(cash, periods, "Operating Cash Flow"),
         capex_approx=[abs(v) for v in _row(cash, periods, "Capital Expenditure")],
         equity=_row(balance, periods, "Common Stock Equity", "Stockholders Equity"),
-        debt=_row(balance, periods, "Total Debt"),
-        receivables=_row(balance, periods, "Receivables", "Accounts Receivable"),
+        debt=debt,
+        # "Receivables" is yfinance's broad aggregate (trade AR + other/tax
+        # receivables); prefer the narrower trade "Accounts Receivable" line since
+        # that's what receivable_days() is meant to measure, falling back to the
+        # aggregate only when the narrower line isn't available.
+        receivables=_row(balance, periods, "Accounts Receivable", "Receivables"),
         inventory=_row(balance, periods, "Inventory"),
         cash_and_bank=_row(balance, periods, "Cash And Cash Equivalents", "Cash Cash Equivalents And Short Term Investments"),
         # "Investments And Advances" is non-current marketable securities only --
