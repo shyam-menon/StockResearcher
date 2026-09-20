@@ -36,17 +36,17 @@ rectangle "07 Valuation Metric\nLookup" as M07 <<code>>
 rectangle "13 Reverse Valuation" as M13 <<code>>
 
 rectangle "02 Business Analysis" as M02 <<ai>>
-rectangle "03 Moat Analysis" as M03 <<ai>>
+rectangle "03 Moat Analysis\n(+ consistency floor)" as M03 <<ai>>
 rectangle "04 Growth Drivers" as M04 <<ai>>
 rectangle "08 Price & Sentiment" as M08 <<ai>>
 
 rectangle "06 Risk Analysis" as M06 <<hybrid>>
-rectangle "09 AI Risk Assessment" as M09 <<hybrid>>
+rectangle "09 AI Risk Assessment\n(confidence-gated override)" as M09 <<hybrid>>
 rectangle "10 Balance Sheet" as M10 <<hybrid>>
 rectangle "11 Cash Flow Analysis" as M11 <<hybrid>>
 rectangle "12 Incremental ROIC\n& Runway" as M12 <<hybrid>>
 
-rectangle "14 Investment Decision\n(Reject / Watchlist / Buy)" as M14 <<final>>
+rectangle "14 Investment Decision\n(code rules, no TypeSafe)" as M14 <<final>>
 
 FD --> M01
 FD --> M05
@@ -98,7 +98,7 @@ legend right
   |<back:#E6F4EA>| Code only — plain Python arithmetic, no AI call |
   |<back:#E8F0FE>| TypeSafe only — one batched Noul/Choice/Score call over Brief evidence |
   |<back:#FDF3E0>| Hybrid — code computes/aggregates, TypeSafe interprets or classifies |
-  |<back:#FBE8E7>| Final decision — combines every module's output |
+  |<back:#FBE8E7>| Final decision — deterministic code combining every module's output (no TypeSafe call) |
 endlegend
 
 @enduml

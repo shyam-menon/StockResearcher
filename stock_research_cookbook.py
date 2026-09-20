@@ -208,6 +208,18 @@ def _moat_source_label(p_yes: float) -> str:
     return "Unclear"
 
 
+def _apply_moat_consistency_floor(size: str, present_count: int) -> str:
+    """The size Choice is elicited independently of the 5 per-source Noul results, so
+    nothing stops Jev from calling the moat "Wide" while only one source is actually
+    "Present". Cap (never raise) the verdict to what the source count can support --
+    Wide needs >=2 proven sources, Narrow needs >=1."""
+    if size == "Wide" and present_count < 2:
+        return "Narrow" if present_count >= 1 else "None"
+    if size == "Narrow" and present_count < 1:
+        return "None"
+    return size
+
+
 MOAT_SOURCE_LABELS = {
     "switching_costs": "Switching Costs: do customers face significant cost or friction switching to a competitor?",
     "intangible_assets": "Intangible Assets: does a brand, patent, regulatory licence, or proprietary data provide real pricing power?",
@@ -250,11 +262,15 @@ def module_03_moat(brief: Brief) -> dict:
         src: {"label": _moat_source_label(result[f"present_{src}"]["p_yes"]), "p_yes": result[f"present_{src}"]["p_yes"]}
         for src in MOAT_SOURCES
     }
-    size, size_confidence = top_choice(result["size"])
+    size_raw, size_confidence = top_choice(result["size"])
     direction, direction_confidence = top_choice(result["direction"])
+    present_count = sum(1 for v in present.values() if v["label"] == "Present")
+    size = _apply_moat_consistency_floor(size_raw, present_count)
     return {
         "present": present,
         "size": size,
+        "size_raw": size_raw,
+        "size_downgraded": size != size_raw,
         "size_confidence": size_confidence,
         "direction": direction,
         "direction_confidence": direction_confidence,
@@ -285,8 +301,9 @@ def module_04_growth(brief: Brief) -> dict:
             "criteria": {
                 "Strong": "Strong evidence; this is a major, currently-active growth engine.",
                 "Moderate": "Some evidence; a secondary contributor, not the primary growth engine.",
-                "Weak": "Little to no supporting evidence, or evidence of a headwind.",
+                "Weak": "Evidence indicates this driver is genuinely weak or a headwind (not merely undiscussed).",
                 "NotApplicable": "This driver does not apply to this business.",
+                "InsufficientEvidence": "The evidence brief does not address this driver, or provides too little detail to judge it either way.",
             },
         }
         for key, label in GROWTH_DRIVER_LABELS.items()
@@ -358,7 +375,7 @@ RISK_DIMENSION_LABELS = {
     "outside_forces": "Exposure to factors outside the company's control: regulation, commodities, forex, interest rates",
     "competition": "Competitive intensity and whether it is getting better or worse",
 }
-_RISK_WEIGHT = {"Red": 3, "Yellow": 2, "Green": 1}
+_RISK_WEIGHT = {"Red": 3, "Yellow": 2, "Green": 1}  # "Unknown" intentionally excluded -- it isn't a risk level
 
 
 def module_06_risk(brief: Brief) -> dict:
@@ -366,11 +383,12 @@ def module_06_risk(brief: Brief) -> dict:
     questions = {
         f"risk_{key}": {
             "kind": "choice",
-            "instructions": f"Rate this risk dimension Red/Yellow/Green based on the evidence: {label}. Default to Yellow if evidence is ambiguous.",
+            "instructions": f"Rate this risk dimension Red/Yellow/Green based on the evidence: {label}. Choose Unknown rather than guessing if the evidence does not address this dimension.",
             "criteria": {
                 "Red": "Serious, high-severity risk with weak mitigation.",
-                "Yellow": "Moderate risk, some mitigation in evidence.",
+                "Yellow": "Moderate, known risk with some mitigation evidenced.",
                 "Green": "Low risk with strong mitigation or no material exposure.",
+                "Unknown": "The evidence brief does not address this risk dimension, or provides too little detail to judge it either way.",
             },
         }
         for key, label in RISK_DIMENSION_LABELS.items()
@@ -379,14 +397,26 @@ def module_06_risk(brief: Brief) -> dict:
     choices = {key: top_choice(result[f"risk_{key}"]) for key in RISK_DIMENSION_LABELS}
     ratings = {key: label for key, (label, _) in choices.items()}
     confidences = {key: conf for key, (_, conf) in choices.items()}
-    avg = sum(_RISK_WEIGHT[r] for r in ratings.values()) / len(ratings)
-    if avg >= 2.5:
-        overall = "High"
-    elif avg >= 1.5:
-        overall = "Medium"
+    known = {k: v for k, v in ratings.items() if v in _RISK_WEIGHT}
+    unknown_dimensions = [k for k, v in ratings.items() if v not in _RISK_WEIGHT]
+    if known:
+        avg = sum(_RISK_WEIGHT[r] for r in known.values()) / len(known)
+        if avg >= 2.5:
+            overall = "High"
+        elif avg >= 1.5:
+            overall = "Medium"
+        else:
+            overall = "Low"
     else:
-        overall = "Low"
-    return {"ratings": ratings, "confidences": confidences, "weighted_average": avg, "overall": overall}
+        avg = None
+        overall = "Unrated"
+    return {
+        "ratings": ratings,
+        "confidences": confidences,
+        "weighted_average": avg,
+        "overall": overall,
+        "unknown_dimensions": unknown_dimensions,
+    }
 
 
 # --------------------------------------------------------------------------
@@ -447,6 +477,10 @@ AI_LENS_LABELS = {
     "physical_world": "Physical world lens: does the product require physical hardware/infrastructure, or is it purely software?",
     "network": "Network/data lens: does the company own proprietary data/network effects AI needs, or rely on public information?",
 }
+# A single lens rated Fragile overrides every other lens (see below) -- require that
+# lens's own confidence to clear a real bar first, so a barely-above-baseline 3-way
+# split can't flip the whole company to Fragile.
+AI_FRAGILE_OVERRIDE_CONFIDENCE = 0.70
 
 
 def module_09_ai_risk(brief: Brief) -> dict:
@@ -471,7 +505,11 @@ def module_09_ai_risk(brief: Brief) -> dict:
     counts = {"Fragile": 0, "Robust": 0, "AntiFragile": 0}
     for v in ratings.values():
         counts[v] += 1
-    if counts["Fragile"] > 0:
+    fragile_confident = any(
+        rating == "Fragile" and confidences[key] >= AI_FRAGILE_OVERRIDE_CONFIDENCE
+        for key, rating in ratings.items()
+    )
+    if fragile_confident:
         overall = "Fragile"
     elif counts["AntiFragile"] >= 3:
         overall = "Anti-Fragile"
@@ -698,13 +736,21 @@ def module_13_reverse_valuation(fd: FinancialData, brief: Brief) -> dict:
 
 
 # --------------------------------------------------------------------------
-# Module 14 — Investment Decision (Choice given composite scores, code thesis)
+# Module 14 — Investment Decision (deterministic rules over composite scores)
 # --------------------------------------------------------------------------
+
+# "Acceptable" business/financial quality cutoffs for the Buy/Watchlist/Reject rule below.
+BUSINESS_QUALITY_MIN = 6.5
+FINANCIAL_QUALITY_MIN = 7.0
+
 
 def _business_quality_score(moat: dict, growth: dict, risk: dict, ai_risk: dict) -> float:
     moat_points = {"Wide": 3, "Narrow": 2, "None": 0}[moat["size"]]
     growth_points = min(3, len(growth["primary_drivers"]))
-    risk_points = {"Low": 3, "Medium": 2, "High": 0}[risk["overall"]]
+    # "Unrated" (all 4 risk dimensions came back Unknown) is scored as neutral -- same as
+    # Medium -- so a stock with too little risk evidence to rate is neither penalized nor
+    # rewarded relative to a known-Medium-risk stock.
+    risk_points = {"Low": 3, "Medium": 2, "High": 0, "Unrated": 2}[risk["overall"]]
     ai_points = {"Anti-Fragile": 3, "Robust": 2, "Fragile": 0}[ai_risk["overall"]]
     return round((moat_points + growth_points + risk_points + ai_points) / 12 * 10, 1)
 
@@ -725,30 +771,15 @@ def module_14_decision(
     financial_quality = _financial_quality_score(metrics, balance_sheet, cash_flow)
     valuation_verdict = "Attractive" if valuation["meets_hurdle"] and valuation["margin_of_safety"] != "Low" else "Not yet attractive"
 
-    state = {
-        "business_quality_score_out_of_10": business_quality,
-        "financial_quality_score_out_of_10": financial_quality,
-        "valuation_verdict": valuation_verdict,
-        "probability_weighted_cagr": valuation["probability_weighted_cagr"],
-        "margin_of_safety": valuation["margin_of_safety"],
-    }
-    questions = {
-        "decision": {
-            "kind": "choice",
-            "instructions": (
-                "Given the business quality score, financial quality score, and valuation verdict, make the "
-                "final call. All three conditions (business quality, financial quality, valuation) must be "
-                "acceptable simultaneously for a Buy."
-            ),
-            "criteria": {
-                "Reject": "Business quality or financial quality is unacceptable.",
-                "Watchlist": "Business and financial quality are good, but valuation is not yet attractive.",
-                "Buy": "Business quality, financial quality, and valuation are all acceptable simultaneously.",
-            },
-        }
-    }
-    result = ask(state, questions)
-    decision, decision_confidence = top_choice(result["decision"])
+    # business_quality, financial_quality, and valuation_verdict are all already fully
+    # computed numbers by this point -- there's no genuine ambiguity left for Jev to
+    # resolve, so the final call is an explicit, reproducible rule instead of a Choice.
+    if business_quality < BUSINESS_QUALITY_MIN or financial_quality < FINANCIAL_QUALITY_MIN:
+        decision = "Reject"
+    elif valuation_verdict != "Attractive":
+        decision = "Watchlist"
+    else:
+        decision = "Buy"
 
     kill_criteria = [
         f"Incremental ROIC falls below the ~12% cost-of-capital floor (currently "
@@ -773,7 +804,6 @@ def module_14_decision(
         "financial_quality": financial_quality,
         "valuation_verdict": valuation_verdict,
         "decision": decision,
-        "decision_confidence": decision_confidence,
         "kill_criteria": kill_criteria,
         "one_line_thesis": one_line_thesis,
     }
@@ -812,7 +842,8 @@ def main(xlsx_path: str, brief_path: str) -> None:
     moat = module_03_moat(brief)
     for src, info in moat["present"].items():
         print(f"  {src}: {info['label']} (p={info['p_yes']:.2f})")
-    print(f"Overall moat: {moat['size']} (p={moat['size_confidence']:.2f}), "
+    downgrade_note = f" [Jev verdict: {moat['size_raw']}, downgraded on evidence-consistency floor]" if moat["size_downgraded"] else ""
+    print(f"Overall moat: {moat['size']} (p={moat['size_confidence']:.2f}){downgrade_note}, "
           f"{moat['direction']} (p={moat['direction_confidence']:.2f})")
 
     _section("Module 04 — Growth Drivers")
@@ -833,7 +864,8 @@ def main(xlsx_path: str, brief_path: str) -> None:
     risk = module_06_risk(brief)
     for dim, rating in risk["ratings"].items():
         print(f"  {dim}: {rating} (p={risk['confidences'][dim]:.2f})")
-    print(f"Weighted average: {risk['weighted_average']:.2f} -> Overall risk: {risk['overall']}")
+    avg_display = f"{risk['weighted_average']:.2f}" if risk["weighted_average"] is not None else "n/a"
+    print(f"Weighted average: {avg_display} -> Overall risk: {risk['overall']}")
 
     _section("Module 07 — Valuation Metrics")
     val_metrics = module_07_valuation_metrics(phase)
@@ -897,7 +929,7 @@ def main(xlsx_path: str, brief_path: str) -> None:
     )
     print(f"Business Quality: {decision['business_quality']}/10  |  Financial Quality: "
           f"{decision['financial_quality']}/10  |  Valuation: {decision['valuation_verdict']}")
-    print(f"DECISION: {decision['decision']} (p={decision['decision_confidence']:.2f})")
+    print(f"DECISION: {decision['decision']}")
     print("Kill criteria:")
     for kc in decision["kill_criteria"]:
         print(f"  - {kc}")

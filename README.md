@@ -19,13 +19,16 @@ Numeric/mechanical parts of the framework (financial ratios, ROIC math,
 reverse-valuation scenario math) are plain Python arithmetic in `excel_loader.py` —
 an LLM adds nothing there, and several of the framework's own guardrails demand
 mechanical, non-discretionary application anyway. Qualitative judgment calls (Moat,
-Growth Drivers, Risk ratings, Sentiment, AI Risk, the final Reject/Watchlist/Buy
-decision) are TypeSafe `Noul`/`Choice`/`Score` calls over the brief's evidence text —
-see `stock_research_cookbook.py` for the full module-by-module breakdown.
+Growth Drivers, Risk ratings, Sentiment, AI Risk) are TypeSafe `Noul`/`Choice`/`Score`
+calls over the brief's evidence text — see `stock_research_cookbook.py` for the full
+module-by-module breakdown. The final Reject/Watchlist/Buy decision (Module 14) is
+deterministic code that combines those judgments' resulting scores against explicit
+thresholds, rather than a further Jev call — see "Consistency guardrails on top of
+Jev judgments" below for why.
 
 ## Which TypeSafe primitive is used where, and why
 
-10 of the 14 modules call TypeSafe. Across those, all three primitives appear, but
+9 of the 14 modules call TypeSafe. Across those, all three primitives appear, but
 very unevenly — `Choice` does most of the work, `Noul` covers a handful of pure
 yes/no checks, and `Score` is used exactly once.
 
@@ -40,19 +43,18 @@ yes/no checks, and `Score` is used exactly once.
 Noul fits these because each is a standalone yes/no judgment with no need to
 compare against sibling options.
 
-**`Choice` (pick one of a defined set) — 24 questions, 9 modules — the workhorse**
+**`Choice` (pick one of a defined set) — 23 questions, 8 modules — the workhorse**
 - Module 02: `revenue_pattern` (Recurring/OneTime/Project-based repeat),
   `recession_behavior` (Cyclical/Resilient/ModeratelyCyclical)
 - Module 03: `size` (None/Narrow/Wide), `direction` (Widening/Stable/Narrowing)
 - Module 04 (Growth Drivers): one Choice per driver, 7 total — Strong/Moderate/
-  Weak/NotApplicable
-- Module 06 (Risk): one Choice per dimension, 4 total — Red/Yellow/Green
+  Weak/NotApplicable/InsufficientEvidence
+- Module 06 (Risk): one Choice per dimension, 4 total — Red/Yellow/Green/Unknown
 - Module 08 (Sentiment): `sentiment_tone`, `outlook_12m`
 - Module 09 (AI Risk): one Choice per lens, 4 total — Fragile/Robust/AntiFragile
 - Module 10 (Balance Sheet): `verdict` — synthesizes the computed ratios into
   VeryStrong/Strong/Adequate/Stressed
 - Module 12 (Runway): `runway` — Short/Medium/Long
-- Module 14 (Decision): `decision` — Reject/Watchlist/Buy
 
 Choice dominates because almost every judgment in this framework is "which
 labeled bucket does this fall into," and Choice's distribution over
@@ -69,6 +71,42 @@ used for Growth Drivers even though "Strong/Moderate/Weak" looks ordinal — Cho
 was used there instead, since the option set also needs a non-ordinal
 "NotApplicable" bucket, which breaks Score's assumption of an ordered scale (see
 the comment above `module_04_growth` in `stock_research_cookbook.py`).
+
+## Consistency guardrails on top of Jev judgments
+
+Each Jev call above answers one question in isolation. A few places in the
+framework need more than that — either a cross-check between two independently-
+asked questions, or a way to say "the evidence doesn't say" without that being
+silently treated as a bad answer. These are enforced in code, not left to a
+prompt instruction:
+
+- **Module 3 (Moat) — evidence-consistency floor.** The 5 per-source `Noul`
+  checks and the overall `size` Choice are asked independently, so nothing
+  stops Jev from calling the moat "Wide" while only one source actually came
+  back "Present." `_apply_moat_consistency_floor` caps (never raises) the
+  verdict to what the source count supports: Wide requires ≥2 sources rated
+  Present, Narrow requires ≥1, else the verdict is downgraded. The raw Jev
+  verdict is kept as `size_raw` and shown alongside the floored one whenever
+  a downgrade happens, so the discrepancy stays visible rather than hidden.
+- **Module 9 (AI Risk) — confidence-gated override.** A single lens rated
+  Fragile overrides the other three lenses' verdicts — but only if that
+  lens's own confidence is ≥`AI_FRAGILE_OVERRIDE_CONFIDENCE` (0.70). A
+  Fragile call that's barely ahead of a near-even 3-way split no longer
+  flips the whole company.
+- **Modules 4 & 6 — insufficient evidence is its own answer.** Growth's
+  `Weak` and Risk's old "default to Yellow if ambiguous" instruction both
+  conflated "the evidence doesn't address this" with "this is genuinely
+  weak/risky." Growth now has a 5th option, `InsufficientEvidence`; Risk now
+  has a 4th, `Unknown`. `Unknown` risk dimensions are excluded from the
+  Red/Yellow/Green weighted average rather than folded into Yellow; if all 4
+  come back Unknown, `overall` is `"Unrated"` instead of a fabricated
+  Low/Medium/High.
+- **Module 14 (Decision) — explicit thresholds, not a further Jev call.**
+  By the time the decision is made, `business_quality`, `financial_quality`,
+  and `valuation_verdict` are already fully-computed numbers — there's no
+  genuine ambiguity left for Jev to resolve. The rule is: Reject if
+  `business_quality < 6.5` or `financial_quality < 7.0`; Watchlist if both
+  clear that bar but `valuation_verdict != "Attractive"`; Buy otherwise.
 
 ## Running it
 
@@ -187,3 +225,7 @@ expansions, and margin trends), and make sure the three probabilities sum to 1.0
 - Module 12's reinvestment-rate estimate can read as artificially low in a year where
   working-capital release makes FCF unusually high relative to NOPAT — it's a
   single-year approximation, not a smoothed multi-year figure.
+- Module 6's `"Unrated"` overall risk (all 4 dimensions came back `Unknown`) is scored
+  as neutral in `_business_quality_score` (`risk_points = 2`, same as Medium), so a
+  stock with too little risk evidence to rate isn't penalized or rewarded relative to
+  a known-Medium-risk stock.

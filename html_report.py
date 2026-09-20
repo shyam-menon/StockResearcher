@@ -101,7 +101,15 @@ def render_html(
                 for src, info in moat["present"].items()
             ]
             + [
-                ("Overall size", _badge_p(moat["size"], moat["size_confidence"])),
+                (
+                    "Overall size",
+                    _badge_p(moat["size"], moat["size_confidence"])
+                    + (
+                        f" <span class='note'>(Jev verdict: {html.escape(moat['size_raw'])} &mdash; downgraded, "
+                        f"evidence doesn't support it)</span>"
+                        if moat["size_downgraded"] else ""
+                    ),
+                ),
                 ("Direction", _badge_p(moat["direction"], moat["direction_confidence"])),
             ],
         ),
@@ -192,14 +200,13 @@ def render_html(
             ("Business Quality", f"{decision['business_quality']}/10"),
             ("Financial Quality", f"{decision['financial_quality']}/10"),
             ("Valuation verdict", _fmt(decision["valuation_verdict"])),
-            ("Decision", _badge_p(decision["decision"], decision["decision_confidence"])),
+            ("Decision", _badge(decision["decision"])),
             ("Kill criteria", _list(decision["kill_criteria"])),
         ]),
     ]
 
     section_html = "".join(f"<section><h2>{title}</h2>{body}</section>" for title, body in sections)
     decision_class = _BADGE_CLASS.get(decision["decision"], "muted")
-    decision_p = decision["decision_confidence"]
 
     return f"""<!doctype html>
 <html lang="en">
@@ -268,8 +275,7 @@ def render_html(
 
   <div class="thesis">
     {html.escape(decision["one_line_thesis"])}
-    <div class="decision-line">Decision: <span class="badge {decision_class}">{html.escape(decision["decision"])}</span>
-      <span class="note">(p={decision_p:.2f})</span></div>
+    <div class="decision-line">Decision: <span class="badge {decision_class}">{html.escape(decision["decision"])}</span></div>
   </div>
 
   {section_html}
