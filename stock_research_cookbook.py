@@ -25,7 +25,7 @@ from dotenv import load_dotenv
 from cooksafe import JsonCache
 from typesafe_sdk import Choice, ChoiceAnswer, Noul, NoulAnswer, Score, TypeSafeClient
 
-from brief_schema import Brief, load_brief
+from brief_schema import Brief, load_brief, _UNIT_LABELS
 from excel_loader import FinancialData, load_financials
 from html_report import render_html, _slugify
 from online_loader import load_financials_online
@@ -719,15 +719,34 @@ def module_12_roic_runway(fd: FinancialData, brief: Brief) -> dict:
 def module_13_reverse_valuation(fd: FinancialData, brief: Brief) -> dict:
     current_price = fd.current_price
     shares = fd.num_shares[-1]
+
+    units = brief.valuation_units
+    if units and _UNIT_LABELS[units["unit"]] != fd.unit_label:
+        raise ValueError(
+            f"Brief valuation_units.unit is {units['unit']!r} but the loaded financials are in "
+            f"{fd.unit_label!r}; fy_plus5_pat must use the loader's unit"
+        )
+
     scenarios = {}
     weighted_cagr = 0.0
     for name, s in brief.valuation_scenarios.items():
-        future_pat_cr = s["fy_plus5_pat_cr"]  # expressed in fd.unit_label units (Cr for Excel/India, M for online)
-        future_eps = future_pat_cr * fd.unit_divisor / shares
+        future_pat = s["fy_plus5_pat"]  # in fd.unit_label units (Cr for Excel/India, M for online)
+        # Net buybacks (negative change) shrink the share count; absent field means flat.
+        future_shares = shares * (1 + s["annual_share_count_change_pct"] / 100) ** 5
+        future_eps = future_pat * fd.unit_divisor / future_shares
         future_price = future_eps * s["exit_pe"]
-        cagr = (future_price / current_price) ** (1 / 5) - 1
-        scenarios[name] = {"future_price": future_price, "cagr": cagr, "probability": s["probability"]}
-        weighted_cagr += s["probability"] * cagr
+        cumulative_dividends = s["annual_dividend_per_share"] * 5  # simple sum, not reinvested
+        price_cagr = (future_price / current_price) ** (1 / 5) - 1
+        total_cagr = ((future_price + cumulative_dividends) / current_price) ** (1 / 5) - 1
+        scenarios[name] = {
+            "future_price": future_price,
+            "future_shares": future_shares,
+            "cumulative_dividends": cumulative_dividends,
+            "price_cagr": price_cagr,
+            "cagr": total_cagr,  # total return (price + dividends); drives the hurdle test
+            "probability": s["scenario_weight"],
+        }
+        weighted_cagr += s["scenario_weight"] * total_cagr
 
     base_future_price = scenarios["base"]["future_price"]
     entry_zone = {
@@ -746,6 +765,7 @@ def module_13_reverse_valuation(fd: FinancialData, brief: Brief) -> dict:
         "meets_hurdle": weighted_cagr >= hurdle,
         "margin_of_safety": margin_of_safety,
         "entry_zone": entry_zone,
+        "capital_return_evidence": brief.capital_return_evidence,
     }
 
 

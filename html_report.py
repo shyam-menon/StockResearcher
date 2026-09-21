@@ -185,18 +185,26 @@ def render_html(
             "13 &middot; Reverse Valuation",
             [("Current price / P/E", f"{fd.currency_symbol}{valuation['current_price']:,.2f} / {valuation['current_pe']:.1f}x")]
             + [
-                (f"{name.capitalize()} (p={s['probability']:.0%})",
-                 f"target {fd.currency_symbol}{s['future_price']:,.0f} &rarr; {s['cagr']:.1%} CAGR")
+                (f"{name.capitalize()} (weight {s['probability']:.0%})",
+                 f"target {fd.currency_symbol}{s['future_price']:,.0f}"
+                 + (f" + {fd.currency_symbol}{s['cumulative_dividends']:,.2f} dividends"
+                    if s["cumulative_dividends"] else "")
+                 + f" on {s['future_shares'] / 1e6:,.0f}M shares &rarr; "
+                 f"{s['cagr']:.1%} CAGR ({s['price_cagr']:.1%} price only)")
                 for name, s in valuation["scenarios"].items()
             ]
             + [
-                ("Probability-weighted CAGR",
+                ("Weighted CAGR (total return)",
                  f"{valuation['probability_weighted_cagr']:.1%} (meets 12% hurdle: {_fmt(valuation['meets_hurdle'])})"),
                 ("Margin of safety",
                  _badge_as(valuation["margin_of_safety"], {"Low": "bad", "Moderate": "warn", "High": "good"})),
                 ("Entry zone", html.escape(", ".join(
                     f"{k.replace('pct_cagr', '%')}: {fd.currency_symbol}{v:,.0f}" for k, v in valuation["entry_zone"].items()
                 ))),
+            ]
+            + [
+                (html.escape(k.replace("_", " ").capitalize()), html.escape(str(v)))
+                for k, v in (valuation.get("capital_return_evidence") or {}).items()
             ],
         ),
         _section("14 &middot; Investment Decision", [

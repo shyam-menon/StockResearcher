@@ -24,6 +24,8 @@ GROWTH_DRIVERS = (
 )
 RISK_DIMENSIONS = ("concentration", "disruption", "outside_forces", "competition")
 AI_RISK_LENSES = ("liability", "business_model", "physical_world", "network")
+# valuation_units.unit -> the loader's unit_label
+_UNIT_LABELS = {"crore": "Cr", "million": "M"}
 
 
 @dataclass
@@ -37,6 +39,8 @@ class Brief:
     ai_risk_evidence: dict[str, str]
     valuation_scenarios: dict[str, dict]
     ticker: str | None = None  # Yahoo Finance ticker symbol; used only when the Excel export is absent
+    valuation_units: dict | None = None  # {"currency": ..., "unit": "crore"|"million"}; checked against the loader's unit
+    capital_return_evidence: dict | None = None  # buyback/dividend facts from filings; shown in the report
 
 
 def load_brief(json_path: str | Path) -> Brief:
@@ -72,6 +76,21 @@ def load_brief(json_path: str | Path) -> Brief:
         if scenario not in data["valuation_scenarios"]:
             raise ValueError(f"Brief {json_path} valuation_scenarios missing: {scenario}")
 
+    scenarios = {
+        name: _normalize_scenario(json_path, name, s)
+        for name, s in data["valuation_scenarios"].items()
+    }
+    total_weight = sum(s["scenario_weight"] for s in scenarios.values())
+    if abs(total_weight - 1.0) > 0.01:
+        raise ValueError(f"Brief {json_path} scenario weights sum to {total_weight}, expected 1.0")
+
+    valuation_units = data.get("valuation_units")
+    if valuation_units is not None and valuation_units.get("unit") not in _UNIT_LABELS:
+        raise ValueError(
+            f"Brief {json_path} valuation_units.unit must be one of {sorted(_UNIT_LABELS)}, "
+            f"got {valuation_units.get('unit')!r}"
+        )
+
     return Brief(
         company_name=data["company_name"],
         business_description=data["business_description"],
@@ -80,6 +99,29 @@ def load_brief(json_path: str | Path) -> Brief:
         risk_evidence=data["risk_evidence"],
         price_sentiment_narrative=data["price_sentiment_narrative"],
         ai_risk_evidence=data["ai_risk_evidence"],
-        valuation_scenarios=data["valuation_scenarios"],
+        valuation_scenarios=scenarios,
         ticker=data.get("ticker"),
+        valuation_units=valuation_units,
+        capital_return_evidence=data.get("capital_return_evidence"),
     )
+
+
+def _normalize_scenario(json_path, name: str, s: dict) -> dict:
+    """Return a scenario with canonical keys, accepting the legacy names
+    (`probability`, `fy_plus5_pat_cr`) so older briefs keep working."""
+    weight = s.get("scenario_weight", s.get("probability"))
+    pat = s.get("fy_plus5_pat", s.get("fy_plus5_pat_cr"))
+    if weight is None or pat is None or "exit_pe" not in s:
+        raise ValueError(
+            f"Brief {json_path} valuation_scenarios.{name} needs scenario_weight, "
+            f"fy_plus5_pat and exit_pe"
+        )
+    return {
+        "scenario_weight": weight,
+        "fy_plus5_pat": pat,
+        "exit_pe": s["exit_pe"],
+        "assumption": s.get("assumption", ""),
+        # Optional: absent means shares held flat and no dividends counted (legacy behaviour).
+        "annual_share_count_change_pct": s.get("annual_share_count_change_pct", 0.0),
+        "annual_dividend_per_share": s.get("annual_dividend_per_share", 0.0),
+    }

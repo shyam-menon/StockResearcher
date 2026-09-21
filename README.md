@@ -219,24 +219,65 @@ no prose before or after the JSON):
     "network": "<does the company hold proprietary data or a network effect AI would
       need, or does it rely on public information?>"
   },
+  "capital_return_evidence": {
+    "current_shares_outstanding": "<latest diluted/outstanding share count with as-of date>",
+    "shares_repurchased_last_3_fy": "<shares bought back each of the last 3 fiscal years>",
+    "buyback_spend_last_3_fy": "<cash spent on buybacks each of the last 3 fiscal years>",
+    "remaining_buyback_authorization": "<amount/shares still authorized, or 'None'>",
+    "dividend_per_share_last_3_fy": "<dividend per share for each of the last 3 fiscal years>",
+    "free_cash_flow_last_3_fy": "<free cash flow for each of the last 3 fiscal years>",
+    "capital_return_policy": "<stated payout / buyback / dilution policy, incl. any share
+      issuance or stock-based-comp dilution>"
+  },
+  "valuation_units": {
+    "currency": "<ISO code of the price currency, e.g. INR, USD>",
+    "unit": "<'crore' for a screener.in Excel (India) company, 'million' for a company
+      fetched via the Yahoo Finance fallback>"
+  },
   "valuation_scenarios": {
-    "bear": {"probability": <0-1>, "assumption": "<what has to go wrong>",
-      "fy_plus5_pat_cr": <number, PAT 5 years out>, "exit_pe": <number>},
-    "base": {"probability": <0-1>, "assumption": "<the base case path>",
-      "fy_plus5_pat_cr": <number>, "exit_pe": <number>},
-    "bull": {"probability": <0-1>, "assumption": "<what has to go right>",
-      "fy_plus5_pat_cr": <number>, "exit_pe": <number>}
+    "bear": {"scenario_weight": <0-1>, "assumption": "<what has to go wrong>",
+      "fy_plus5_pat": <number, PAT 5 years out, in valuation_units.unit>,
+      "exit_pe": <number>,
+      "annual_share_count_change_pct": <number, e.g. -2.5 for net buybacks, +1 for dilution>,
+      "annual_dividend_per_share": <number, average per-share dividend over the 5 years,
+        in the price currency>},
+    "base": {"scenario_weight": <0-1>, "assumption": "<the base case path>",
+      "fy_plus5_pat": <number>, "exit_pe": <number>,
+      "annual_share_count_change_pct": <number>, "annual_dividend_per_share": <number>},
+    "bull": {"scenario_weight": <0-1>, "assumption": "<what has to go right>",
+      "fy_plus5_pat": <number>, "exit_pe": <number>,
+      "annual_share_count_change_pct": <number>, "annual_dividend_per_share": <number>}
   }
 }
 
 Important: `valuation_scenarios` is forward-looking analyst judgment, not something
-extractable from historical filings — use your own reasoned 5-year PAT and exit-P/E
-assumptions per scenario (grounded in the filings' disclosed growth plans, capacity
-expansions, and margin trends), and make sure the three probabilities sum to 1.0.
-Despite the field's name, `fy_plus5_pat_cr` should be expressed in whatever unit
-the company's numbers are reported in by this pipeline -- Cr for a screener.in/India
-company, millions for a company fetched via the Yahoo Finance fallback (see
-"Running it" above).
+extractable from historical filings — use your own reasoned 5-year assumptions per
+scenario (grounded in the filings' disclosed growth plans, capacity expansions, margin
+trends and capital-return record). Rules:
+
+1. UNITS: never rely on the field name. `fy_plus5_pat` must be in the unit declared in
+   `valuation_units` ("crore" for a screener.in/India company, "million" for a company
+   fetched via the Yahoo Finance fallback -- see "Running it" above). The pipeline
+   rejects a brief whose declared unit does not match the loaded financials.
+2. WEIGHTS: `scenario_weight` values are analyst judgment, not statistical
+   probabilities. They must sum to 1.0.
+3. SHARE COUNT AND DIVIDENDS: the pipeline no longer holds shares flat. Set
+   `annual_share_count_change_pct` from `capital_return_evidence` (net of buybacks
+   and dilution) and `annual_dividend_per_share` from the dividend record. Use 0 only
+   when the company genuinely neither buys back stock nor pays dividends. Do not
+   assume buybacks the company's free cash flow cannot fund.
+4. EXIT P/E: anchor to the company's own historical P/E range. A bull multiple above
+   its historical high needs an explicit quality-of-business improvement (e.g. more
+   recurring revenue, structurally higher margins) named in `assumption`; otherwise
+   cap it at the historical high. Never combine optimistic earnings AND an
+   above-history multiple without that justification.
+5. ASSUMPTION TEXT: each `assumption` must state the implied 5-year PAT CAGR from the
+   latest reported fiscal-year PAT. The bull case must list numeric hurdles (e.g.
+   segment margin, FCF, mix targets) that have to be met. The bear case must cover
+   volume-vs-price/mix erosion where relevant (e.g. price rises masking falling
+   units).
+6. SANITY CHECK: before finalizing, confirm that PAT / future shares x exit P/E gives a
+   per-share price that is consistent with the story in `assumption`.
 ````
 
 ## Known limitations
