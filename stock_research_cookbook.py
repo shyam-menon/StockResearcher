@@ -719,6 +719,7 @@ def module_12_roic_runway(fd: FinancialData, brief: Brief) -> dict:
 def module_13_reverse_valuation(fd: FinancialData, brief: Brief) -> dict:
     current_price = fd.current_price
     shares = fd.num_shares[-1]
+    current_pat = fd.net_profit[-1]  # latest reported FY PAT, in fd.unit_label units
 
     units = brief.valuation_units
     if units and _UNIT_LABELS[units["unit"]] != fd.unit_label:
@@ -738,13 +739,26 @@ def module_13_reverse_valuation(fd: FinancialData, brief: Brief) -> dict:
         cumulative_dividends = s["annual_dividend_per_share"] * 5  # simple sum, not reinvested
         price_cagr = (future_price / current_price) ** (1 / 5) - 1
         total_cagr = ((future_price + cumulative_dividends) / current_price) ** (1 / 5) - 1
+        # Undefined (not just negative) when current PAT isn't a meaningful base, e.g. a
+        # loss-making latest year -- shown as "n/a" in the report rather than a bogus number.
+        pat_cagr = (future_pat / current_pat) ** (1 / 5) - 1 if current_pat > 0 else None
         scenarios[name] = {
             "future_price": future_price,
             "future_shares": future_shares,
+            "future_eps": future_eps,
             "cumulative_dividends": cumulative_dividends,
             "price_cagr": price_cagr,
             "cagr": total_cagr,  # total return (price + dividends); drives the hurdle test
             "probability": s["scenario_weight"],
+            # Raw inputs, carried through so the report can show its work.
+            "current_pat": current_pat,
+            "pat_cagr": pat_cagr,
+            "fy_plus5_pat": future_pat,
+            "exit_pe": s["exit_pe"],
+            "annual_share_count_change_pct": s["annual_share_count_change_pct"],
+            "annual_dividend_per_share": s["annual_dividend_per_share"],
+            "current_shares": shares,
+            "assumption": s.get("assumption", ""),
         }
         weighted_cagr += s["scenario_weight"] * total_cagr
 
@@ -757,9 +771,14 @@ def module_13_reverse_valuation(fd: FinancialData, brief: Brief) -> dict:
     hurdle = 0.12
     margin_of_safety = "Low" if weighted_cagr < hurdle + 0.02 else ("Moderate" if weighted_cagr < hurdle + 0.06 else "High")
 
+    base_fy = fd.latest_year.year
+    target_fy = base_fy + 5
+
     return {
         "current_price": current_price,
         "current_pe": fd.pe_ratio(),
+        "base_fiscal_year": base_fy,
+        "target_fiscal_year": target_fy,
         "scenarios": scenarios,
         "probability_weighted_cagr": weighted_cagr,
         "meets_hurdle": weighted_cagr >= hurdle,
@@ -958,6 +977,7 @@ def main(xlsx_path: str, brief_path: str) -> None:
 
     _section("Module 13 — Reverse Valuation")
     valuation = module_13_reverse_valuation(fd, brief)
+    print(f"5-year horizon: FY{valuation['base_fiscal_year']} -> FY{valuation['target_fiscal_year']}")
     print(f"Current price: {valuation['current_price']:,.2f}  |  Current P/E: {valuation['current_pe']:.1f}x")
     for name, s in valuation["scenarios"].items():
         print(f"  {name.capitalize()} (p={s['probability']:.0%}): target price {s['future_price']:,.0f} "

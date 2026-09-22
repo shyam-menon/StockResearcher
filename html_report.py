@@ -72,6 +72,53 @@ def _section(title: str, rows: list[tuple[str, str]], extra: str = "") -> tuple[
     return title, _table(rows) + extra
 
 
+def _scenario_details(name: str, s: dict, fd) -> str:
+    """A <details> block showing the inputs, the step-by-step math, and the
+    analyst's rationale behind one bear/base/bull target price."""
+    unit = fd.unit_label
+    sym = fd.currency_symbol
+    pat_cagr_text = f"{s['pat_cagr']:.1%}" if s["pat_cagr"] is not None else "n/a"
+    summary = (
+        f"{name.capitalize()} (weight {s['probability']:.0%}): "
+        f"PAT {sym}{s['current_pat']:,.0f}{unit} &rarr; {sym}{s['fy_plus5_pat']:,.0f}{unit} "
+        f"({pat_cagr_text}/yr) &mdash; target {sym}{s['future_price']:,.0f}"
+        + (f" + {sym}{s['cumulative_dividends']:,.2f} dividends" if s["cumulative_dividends"] else "")
+        + f" &rarr; {s['cagr']:.1%} CAGR ({s['price_cagr']:.1%} price only)"
+    )
+    calc_rows = [
+        ("Current FY PAT (latest reported)", f"{sym}{s['current_pat']:,.0f} {unit}"),
+        ("FY+5 PAT (analyst input)", f"{sym}{s['fy_plus5_pat']:,.0f} {unit}"),
+        ("→ Implied 5-yr PAT CAGR",
+         f"({sym}{s['fy_plus5_pat']:,.0f}{unit} &divide; {sym}{s['current_pat']:,.0f}{unit})^(1/5) &minus; 1 "
+         f"= {pat_cagr_text}"),
+        ("Exit P/E (analyst input)", f"{s['exit_pe']:.1f}x"),
+        ("Annual share count change (analyst input)",
+         f"{s['annual_share_count_change_pct']:+.1f}%/yr"),
+        ("Annual dividend/share (analyst input)", f"{sym}{s['annual_dividend_per_share']:,.2f}"),
+        ("Current shares outstanding", f"{s['current_shares'] / 1e6:,.1f}M"),
+        ("→ Future shares (5yr)",
+         f"{s['current_shares'] / 1e6:,.1f}M &times; (1 {s['annual_share_count_change_pct']:+.1f}%)^5 "
+         f"= {s['future_shares'] / 1e6:,.1f}M"),
+        ("→ Future EPS",
+         f"{sym}{s['fy_plus5_pat']:,.0f}{unit} &divide; {s['future_shares'] / 1e6:,.1f}M shares "
+         f"= {sym}{s['future_eps']:,.2f}"),
+        ("→ Future price",
+         f"{sym}{s['future_eps']:,.2f} EPS &times; {s['exit_pe']:.1f}x P/E "
+         f"= {sym}{s['future_price']:,.2f}"),
+        ("→ Cumulative dividends (5yr)",
+         f"{sym}{s['annual_dividend_per_share']:,.2f}/yr &times; 5 = {sym}{s['cumulative_dividends']:,.2f}"),
+        ("→ Price-only CAGR",
+         f"(future price &divide; current price)^(1/5) &minus; 1 = {s['price_cagr']:.1%}"),
+        ("→ Total-return CAGR",
+         f"((future price + dividends) &divide; current price)^(1/5) &minus; 1 = {s['cagr']:.1%}"),
+    ]
+    assumption = f'<p class="note">{html.escape(s["assumption"])}</p>' if s["assumption"] else ""
+    return (
+        f"<details class='calc'><summary>{summary}</summary>"
+        f"{_table(calc_rows)}{assumption}</details>"
+    )
+
+
 def _slugify(name: str) -> str:
     slug = re.sub(r"[^a-z0-9]+", "_", name.lower()).strip("_")
     return slug or "company"
@@ -182,15 +229,12 @@ def render_html(
             ("Runway", _badge_p(roic_runway["runway"], roic_runway["runway_confidence"])),
         ]),
         _section(
-            "13 &middot; Reverse Valuation",
-            [("Current price / P/E", f"{fd.currency_symbol}{valuation['current_price']:,.2f} / {valuation['current_pe']:.1f}x")]
+            f"13 &middot; Reverse Valuation "
+            f"(FY{valuation['base_fiscal_year']} &rarr; FY{valuation['target_fiscal_year']}, 5-year horizon)",
+            [("Current price / P/E", f"{fd.currency_symbol}{valuation['current_price']:,.2f} / {valuation['current_pe']:.1f}x"),
+             ("Scenario target year", f"FY{valuation['target_fiscal_year']} (5 years from the latest reported fiscal year, FY{valuation['base_fiscal_year']})")]
             + [
-                (f"{name.capitalize()} (weight {s['probability']:.0%})",
-                 f"target {fd.currency_symbol}{s['future_price']:,.0f}"
-                 + (f" + {fd.currency_symbol}{s['cumulative_dividends']:,.2f} dividends"
-                    if s["cumulative_dividends"] else "")
-                 + f" on {s['future_shares'] / 1e6:,.0f}M shares &rarr; "
-                 f"{s['cagr']:.1%} CAGR ({s['price_cagr']:.1%} price only)")
+                (f"{name.capitalize()} scenario", _scenario_details(name, s, fd))
                 for name, s in valuation["scenarios"].items()
             ]
             + [
@@ -273,6 +317,14 @@ def render_html(
   .badge.warn {{ background: var(--warn-bg); color: var(--warn-ink); }}
   .badge.bad {{ background: var(--bad-bg); color: var(--bad-ink); }}
   .badge.muted {{ background: var(--muted-bg); color: var(--muted-ink); }}
+  details.calc {{
+    border: 1px solid var(--border); border-radius: 8px; padding: 8px 12px; background: var(--bg);
+  }}
+  details.calc summary {{ cursor: pointer; font-weight: 500; }}
+  details.calc summary::marker {{ color: var(--muted); }}
+  details.calc table.kv {{ margin-top: 10px; font-size: 0.88rem; }}
+  details.calc table.kv th {{ width: 46%; }}
+  details.calc p.note {{ border-top: 1px solid var(--border); padding-top: 8px; }}
   footer {{ color: var(--muted); font-size: 0.8rem; text-align: center; margin-top: 24px; }}
 </style>
 </head>

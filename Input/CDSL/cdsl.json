@@ -32,22 +32,41 @@
   },
   "valuation_scenarios": {
     "bear": {
-      "probability": 0.25,
-      "assumption": "Revenue grows about 5% a year (FY26 grew 5.8%), EBITDA margin (excluding other income) slips to about 44% because expenses keep outgrowing revenue as in Q1 FY27, other income stays near Rs 90 Cr, and FY31 profit after tax is about Rs 478 Cr. The market pays 28x, below the company's recent range. The filings disclose no growth guidance, so this is analyst judgement anchored on FY26 and Q1 FY27 results.",
-      "fy_plus5_pat_cr": 478,
-      "exit_pe": 28
+      "assumption": "Revenue grows about 5% a year (FY26 grew 5.8%), EBITDA margin (excluding other income) slips to about 44% because expenses keep outgrowing revenue as in Q1 FY27, other income stays near Rs 90 Cr, and FY31 profit after tax is about Rs 478 Cr. The market pays 28x, below the company's recent range. The filings disclose no growth guidance, so this is analyst judgement anchored on FY26 and Q1 FY27 results. Dividend per share is assumed to hold FY26's realised ~57% payout ratio against the FY+5 PAT above (about Rs 13.4/share); share count is held flat, since no buyback program or material dilution is disclosed in the sources reviewed.",
+      "exit_pe": 28,
+      "scenario_weight": 0.25,
+      "fy_plus5_pat": 478,
+      "annual_share_count_change_pct": 0.0,
+      "annual_dividend_per_share": 13.4
     },
     "base": {
-      "probability": 0.55,
-      "assumption": "Revenue grows about 12% a year (Q1 FY27 was +13.1%), EBITDA margin recovers to about 51% as expense growth slows toward revenue growth, other income of about Rs 125 Cr, tax about 25.5%, giving FY31 profit after tax of about Rs 756 Cr. Exit at 34x. No capacity or expansion plan is disclosed in the provided filings.",
-      "fy_plus5_pat_cr": 756,
-      "exit_pe": 34
+      "assumption": "Revenue grows about 12% a year (Q1 FY27 was +13.1%), EBITDA margin recovers to about 51% as expense growth slows toward revenue growth, other income of about Rs 125 Cr, tax about 25.5%, giving FY31 profit after tax of about Rs 756 Cr. Exit at 34x. No capacity or expansion plan is disclosed in the provided filings. Dividend per share is assumed to hold FY26's realised ~57% payout ratio against the FY+5 PAT above (about Rs 21.2/share); share count is held flat, since no buyback program or material dilution is disclosed in the sources reviewed.",
+      "exit_pe": 34,
+      "scenario_weight": 0.55,
+      "fy_plus5_pat": 756,
+      "annual_share_count_change_pct": 0.0,
+      "annual_dividend_per_share": 21.2
     },
     "bull": {
-      "probability": 0.2,
-      "assumption": "Revenue grows about 16% a year on higher market activity, EBITDA margin rises to about 55% on operating leverage over a largely fixed technology platform, other income about Rs 150 Cr, giving FY31 profit after tax of about Rs 996 Cr. Exit at 40x.",
-      "fy_plus5_pat_cr": 996,
-      "exit_pe": 40
+      "assumption": "Revenue grows about 16% a year on higher market activity, EBITDA margin rises to about 55% on operating leverage over a largely fixed technology platform, other income about Rs 150 Cr, giving FY31 profit after tax of about Rs 996 Cr. Exit at 40x. Dividend per share is assumed to hold FY26's realised ~57% payout ratio against the FY+5 PAT above (about Rs 27.9/share); share count is held flat, since no buyback program or material dilution is disclosed in the sources reviewed.",
+      "exit_pe": 40,
+      "scenario_weight": 0.2,
+      "fy_plus5_pat": 996,
+      "annual_share_count_change_pct": 0.0,
+      "annual_dividend_per_share": 27.9
     }
+  },
+  "valuation_units": {
+    "currency": "INR",
+    "unit": "crore"
+  },
+  "capital_return_evidence": {
+    "current_shares_outstanding": "Approximately 20.89 crore (208.9 million) shares per third-party sources (companiesmarketcap.com); not independently confirmed against the annual report's cover page in this session",
+    "shares_repurchased_last_3_fy": "No share buyback identified in the sources reviewed for FY24-FY26",
+    "buyback_spend_last_3_fy": "None found",
+    "remaining_buyback_authorization": "None disclosed; no buyback program identified",
+    "dividend_per_share_last_3_fy": "FY24: Rs 19.00 regular final dividend (Rs 22.00 combined with a one-time special dividend); FY25: Rs 12.50; FY26: Rs 12.75 final (+2% YoY)",
+    "free_cash_flow_last_3_fy": "FY26: cash from operations Rs 466.62 Cr, free cash flow Rs 345.92 Cr, dividends paid Rs 261.25 Cr (already cited in price_sentiment_narrative above, from the annual report); FY24/FY25 free cash flow not independently sourced in this session",
+    "capital_return_policy": "No formal written policy identified in the sources reviewed. Observed practice: an annual dividend that grew from Rs 3.50 (FY18) to Rs 12.75 (FY26), about 17.5% CAGR over 8 years but decelerating to roughly 2% in the latest year, on a payout ratio of about 57% of FY26 PAT (Rs 261.25 Cr dividends / Rs 455.08 Cr PAT). No share buybacks identified."
   }
 }

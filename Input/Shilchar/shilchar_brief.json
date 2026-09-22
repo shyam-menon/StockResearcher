@@ -32,22 +32,41 @@
   },
   "valuation_scenarios": {
     "bear": {
-      "probability": 0.25,
-      "assumption": "US tariff becomes permanent and peer over-capacity compresses margins to approximately 23%",
-      "fy_plus5_pat_cr": 160,
-      "exit_pe": 22
+      "assumption": "US tariff becomes permanent and peer over-capacity compresses margins to approximately 23% Dividend per share is assumed to grow to about Rs 14.0, holding the current ~6.5% payout ratio as profit grows, since Shilchar's stated priority is funding capacity expansion from retained earnings rather than raising the payout. Share count is held flat; no buyback program or material dilution is disclosed.",
+      "exit_pe": 22,
+      "scenario_weight": 0.25,
+      "fy_plus5_pat": 160,
+      "annual_share_count_change_pct": 0.0,
+      "annual_dividend_per_share": 14.0
     },
     "base": {
-      "probability": 0.50,
-      "assumption": "Capacity expansion commissions on schedule, margins hold at 29-31%, export recovery begins from FY27",
-      "fy_plus5_pat_cr": 380,
-      "exit_pe": 24
+      "assumption": "Capacity expansion commissions on schedule, margins hold at 29-31%, export recovery begins from FY27 Dividend per share is assumed to grow to about Rs 32.0, holding the current ~6.5% payout ratio as profit grows, since Shilchar's stated priority is funding capacity expansion from retained earnings rather than raising the payout. Share count is held flat; no buyback program or material dilution is disclosed.",
+      "exit_pe": 24,
+      "scenario_weight": 0.5,
+      "fy_plus5_pat": 380,
+      "annual_share_count_change_pct": 0.0,
+      "annual_dividend_per_share": 32.0
     },
     "bull": {
-      "probability": 0.25,
-      "assumption": "220 kV product tier wins export approvals and Middle East expansion accelerates",
-      "fy_plus5_pat_cr": 520,
-      "exit_pe": 28
+      "assumption": "220 kV product tier wins export approvals and Middle East expansion accelerates Dividend per share is assumed to grow to about Rs 44.0, holding the current ~6.5% payout ratio as profit grows, since Shilchar's stated priority is funding capacity expansion from retained earnings rather than raising the payout. Share count is held flat; no buyback program or material dilution is disclosed.",
+      "exit_pe": 28,
+      "scenario_weight": 0.25,
+      "fy_plus5_pat": 520,
+      "annual_share_count_change_pct": 0.0,
+      "annual_dividend_per_share": 44.0
     }
+  },
+  "valuation_units": {
+    "currency": "INR",
+    "unit": "crore"
+  },
+  "capital_return_evidence": {
+    "current_shares_outstanding": "Approximately 7.6 million shares (equity share capital of about Rs 7.63 Cr at Rs 10 face value, FY25). An older third-party source cites a much smaller figure (3,813,400 shares), likely stale or from before a corporate action; not independently confirmed against the annual report in this session.",
+    "shares_repurchased_last_3_fy": "No buyback identified. This brief's own moat evidence already notes the 57% FY25 revenue growth was achieved 'without equity dilution,' and no acquisitions or share issuance were identified.",
+    "buyback_spend_last_3_fy": "None found",
+    "remaining_buyback_authorization": "None disclosed",
+    "dividend_per_share_last_3_fy": "Latest dividend approximately Rs 12.50 (May 2026); FY23-24 dividends totaled about Rs 10.00 across 4 payments. Payout ratio is low, reported at about 6.5% of earnings.",
+    "free_cash_flow_last_3_fy": "FY25 operating cash flow approximately Rs 39.6 Cr against investing outflow of about Rs 47.8 Cr (largely the capacity expansion); free cash flow was therefore negative in FY25, consistent with the bear-case note elsewhere in this brief that 'free cash flow was negative in FY25.'",
+    "capital_return_policy": "No formal policy disclosed. Observed practice is a low payout ratio (~6.5%) with the large majority of profit retained to fund the Gavasad Expansion #3 capacity buildout (doubling capacity by April 2027)."
   }
 }

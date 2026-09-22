@@ -159,6 +159,24 @@
       }
     }
   },
+  "0d8dc895be119564a674d9721bf6e7fdaa82bbd3c22977e400e4ab200e263d0e": {
+    "outlook_12m": {
+      "kind": "choice",
+      "probabilities": {
+        "Bearish": 0.0,
+        "Neutral": 1.0,
+        "Bullish": 0.0
+      }
+    },
+    "sentiment_tone": {
+      "kind": "choice",
+      "probabilities": {
+        "Positive": 0.0,
+        "Neutral": 1.0,
+        "Negative": 0.0
+      }
+    }
+  },
   "0d8ea8bbff5be861a34a10fc94e1a6713cb81f09dcd0e068df4beeae3217b3a3": {
     "risk_competition": {
       "kind": "choice",
@@ -424,6 +442,29 @@
       }
     }
   },
+  "49f56d332b17949285b9c805b492746efb2ba434dbd647a3dc0bc3c9fc8e466e": {
+    "pricing_power": {
+      "kind": "noul",
+      "p_yes": 0.88
+    },
+    "recession_behavior": {
+      "kind": "choice",
+      "probabilities": {
+        "ModeratelyCyclical": 0.77,
+        "Cyclical": 0.05,
+        "Resilient": 0.18
+      }
+    },
+    "revenue_pattern": {
+      "kind": "choice",
+      "probabilities": {
+        "Project-based repeat": 0.0,
+        "OneTime": 0.0,
+        "Recurring": 1.0,
+        "Mixed": 0.0
+      }
+    }
+  },
   "4f902c7d5ddc339ca347da186a9cd3c527d8d26de87ac7c766fbdb0d5ed78f04": {
     "risk_competition": {
       "kind": "choice",
@@ -592,6 +633,24 @@
         "OneTime": 0.0,
         "Mixed": 0.01,
         "Recurring": 0.99
+      }
+    }
+  },
+  "62d042a421d1a5193266422b15553b40a512e9f2b10a38dc0b4c60c45d4426f9": {
+    "outlook_12m": {
+      "kind": "choice",
+      "probabilities": {
+        "Bullish": 0.0,
+        "Bearish": 0.55,
+        "Neutral": 0.45
+      }
+    },
+    "sentiment_tone": {
+      "kind": "choice",
+      "probabilities": {
+        "Positive": 0.0,
+        "Negative": 0.68,
+        "Neutral": 0.32
       }
     }
   },
@@ -819,6 +878,29 @@
         "Reject": 0.0,
         "Watchlist": 1.0,
         "Buy": 0.0
+      }
+    }
+  },
+  "925a62c50eb00ab7e20c9115b57f8a7b74daa8bdaa5ccb3a2955f9243878295f": {
+    "pricing_power": {
+      "kind": "noul",
+      "p_yes": 0.72
+    },
+    "recession_behavior": {
+      "kind": "choice",
+      "probabilities": {
+        "ModeratelyCyclical": 1.0,
+        "Cyclical": 0.0,
+        "Resilient": 0.0
+      }
+    },
+    "revenue_pattern": {
+      "kind": "choice",
+      "probabilities": {
+        "OneTime": 0.03,
+        "Project-based repeat": 0.97,
+        "Mixed": 0.0,
+        "Recurring": 0.0
       }
     }
   },

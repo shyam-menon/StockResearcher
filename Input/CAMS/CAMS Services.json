@@ -31,22 +31,41 @@
   },
   "valuation_scenarios": {
     "bear": {
-      "probability": 0.25,
-      "assumption": "The filing's own disclosed threat materializes — competition and regulatory restrictions 'drive down total expense ratios,' compressing MF fee revenue faster than non-MF businesses (AIF, CAMSRep, CAMSPay, AA, KRA) can offset, given revenue remains 'highly concentrated on the Mutual Fund industry and its few clients.'",
-      "fy_plus5_pat_cr": 730,
-      "exit_pe": 20
+      "assumption": "The filing's own disclosed threat materializes — competition and regulatory restrictions 'drive down total expense ratios,' compressing MF fee revenue faster than non-MF businesses (AIF, CAMSRep, CAMSPay, AA, KRA) can offset, given revenue remains 'highly concentrated on the Mutual Fund industry and its few clients.' Dividend per share is estimated at about Rs 37.5, scaling the confirmed recent dividends (Rs 19.00 FY25 final + Rs 3.50 FY26 interim = at least Rs 22.50) in proportion to this scenario's PAT growth -- a lower-bound estimate, since the full FY25/FY26 annual dividend total was not confirmed in the sources reviewed. Share count is held flat; no buyback program or material dilution is disclosed.",
+      "exit_pe": 20,
+      "scenario_weight": 0.25,
+      "fy_plus5_pat": 730,
+      "annual_share_count_change_pct": 0.0,
+      "annual_dividend_per_share": 37.5
     },
     "base": {
-      "probability": 0.50,
-      "assumption": "Growth moderates from FY25's 25.19% pace but continues at a healthy rate as the disclosed non-MF growth areas (AIF/PMS at ₹2.50 lakh crore AUM, KRA +31% YoY, Account Aggregator +229% YoY, Insurance Repository onboarding LIC) continue scaling alongside steady MF industry AUM growth (which grew from ₹55.0 to ₹66.7 lakh crore in FY25 alone), consistent with the company's stated strategic priorities to strengthen MF leadership while scaling emerging businesses.",
-      "fy_plus5_pat_cr": 1050,
-      "exit_pe": 28
+      "assumption": "Growth moderates from FY25's 25.19% pace but continues at a healthy rate as the disclosed non-MF growth areas (AIF/PMS at ₹2.50 lakh crore AUM, KRA +31% YoY, Account Aggregator +229% YoY, Insurance Repository onboarding LIC) continue scaling alongside steady MF industry AUM growth (which grew from ₹55.0 to ₹66.7 lakh crore in FY25 alone), consistent with the company's stated strategic priorities to strengthen MF leadership while scaling emerging businesses. Dividend per share is estimated at about Rs 54.0, scaling the confirmed recent dividends (Rs 19.00 FY25 final + Rs 3.50 FY26 interim = at least Rs 22.50) in proportion to this scenario's PAT growth -- a lower-bound estimate, since the full FY25/FY26 annual dividend total was not confirmed in the sources reviewed. Share count is held flat; no buyback program or material dilution is disclosed.",
+      "exit_pe": 28,
+      "scenario_weight": 0.5,
+      "fy_plus5_pat": 1050,
+      "annual_share_count_change_pct": 0.0,
+      "annual_dividend_per_share": 54.0
     },
     "bull": {
-      "probability": 0.25,
-      "assumption": "International expansion following the first RTA mandate win (CeyBank, Sri Lanka) and the GIFT City operations (~30 clients) scale meaningfully beyond India, while Account Aggregator, KRA, and Insurance Repository sustain 30%+ growth as seen in FY25, genuinely diversifying revenue away from the concentration risk the filing itself flags.",
-      "fy_plus5_pat_cr": 1450,
-      "exit_pe": 33
+      "assumption": "International expansion following the first RTA mandate win (CeyBank, Sri Lanka) and the GIFT City operations (~30 clients) scale meaningfully beyond India, while Account Aggregator, KRA, and Insurance Repository sustain 30%+ growth as seen in FY25, genuinely diversifying revenue away from the concentration risk the filing itself flags. Dividend per share is estimated at about Rs 74.5, scaling the confirmed recent dividends (Rs 19.00 FY25 final + Rs 3.50 FY26 interim = at least Rs 22.50) in proportion to this scenario's PAT growth -- a lower-bound estimate, since the full FY25/FY26 annual dividend total was not confirmed in the sources reviewed. Share count is held flat; no buyback program or material dilution is disclosed.",
+      "exit_pe": 33,
+      "scenario_weight": 0.25,
+      "fy_plus5_pat": 1450,
+      "annual_share_count_change_pct": 0.0,
+      "annual_dividend_per_share": 74.5
     }
+  },
+  "valuation_units": {
+    "currency": "INR",
+    "unit": "crore"
+  },
+  "capital_return_evidence": {
+    "current_shares_outstanding": "Third-party sources are inconsistent -- one cites about 4.95 crore shares, another cites a post-allotment total of about 24.84 crore shares. CAMS's disclosed market cap (about Rs 17,480-18,700 Cr) against its recent share price is only consistent with the larger (~24.8 crore) figure; not independently confirmed against the annual report in this session.",
+    "shares_repurchased_last_3_fy": "No share buyback identified in the sources reviewed",
+    "buyback_spend_last_3_fy": "None found",
+    "remaining_buyback_authorization": "None disclosed",
+    "dividend_per_share_last_3_fy": "FY25 final dividend of Rs 19.00 confirmed; an FY26 interim dividend of Rs 3.50 was also declared (record date 30 Jan 2026). Full annual totals, including any additional interim dividends within FY25/FY26, were not confirmed in the sources reviewed. A payout ratio near 73% of profit is reported by one third-party source; not independently confirmed.",
+    "free_cash_flow_last_3_fy": "Not independently sourced in this session",
+    "capital_return_policy": "No formal written policy identified in the sources reviewed; CAMS is widely reported as a high-payout business (cited near 73% of profit). No buybacks identified."
   }
 }
