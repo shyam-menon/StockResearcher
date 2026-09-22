@@ -26,7 +26,7 @@ from cooksafe import JsonCache
 from typesafe_sdk import Choice, ChoiceAnswer, Noul, NoulAnswer, Score, TypeSafeClient
 
 from brief_schema import Brief, load_brief, _UNIT_LABELS
-from excel_loader import FinancialData, load_financials
+from excel_loader import THIN_CAPITAL_FLOOR, FinancialData, load_financials
 from html_report import render_html, _slugify
 from online_loader import load_financials_online
 
@@ -539,6 +539,11 @@ def module_09_ai_risk(brief: Brief) -> dict:
 def module_10_balance_sheet(fd: FinancialData) -> dict:
     net_cash = fd.cash_and_bank[-1] + fd.investments[-1] - fd.debt[-1]
     equity_now = fd.equity[-1]
+    # Shared "is equity a meaningful base for a ratio computed off it?" flag, reused below for
+    # both the leverage fallback and the returns average -- both ratios (debt/equity, ROE)
+    # divide by the same equity_now, so they should share one notion of when it's too thin
+    # (negative, or small relative to debt) to trust, not two different thresholds.
+    equity_thin = equity_now <= 0 or equity_now < fd.debt[-1] * 0.2
 
     # debt/equity breaks for a company whose book equity has been shrunk (or made negative) by
     # years of buybacks: the same distortion flips the ratio's sign in opposite directions for
@@ -549,13 +554,28 @@ def module_10_balance_sheet(fd: FinancialData) -> dict:
     # denominator for the ratio to mean what it's supposed to.
     if fd.is_debt_free() or net_cash >= 0:
         leverage_rating = "Strong"
-    elif equity_now <= 0 or equity_now < fd.debt[-1] * 0.2:
-        net_debt_to_ebit = -net_cash / fd.ebit[-1] if fd.ebit[-1] else None
-        leverage_rating = _bucket(net_debt_to_ebit, 1.0, 3.0, higher_is_better=False)
+    elif equity_thin:
+        if fd.ebit[-1] <= 0:
+            # Lossmaking with net debt outstanding (net_cash < 0 is already guaranteed above)
+            # is unambiguously bad leverage. Computing net_debt/EBIT here would divide a
+            # positive net-debt figure by a negative EBIT, produce a negative ratio, and get
+            # misread by _bucket(..., higher_is_better=False) as "excellent" -- the same
+            # sign-flip bug the debt/equity fallback below exists to avoid.
+            leverage_rating = "Red"
+        else:
+            net_debt_to_ebit = -net_cash / fd.ebit[-1]
+            leverage_rating = _bucket(net_debt_to_ebit, 1.0, 3.0, higher_is_better=False)
     else:
         leverage_rating = _bucket(fd.debt_to_equity(), 0.3, 0.7, higher_is_better=False)
 
-    returns_avg = (fd.roe() + fd.roce() + fd.roic()) / 3
+    # ROE divides by the same thin/negative equity_now, so it can contaminate the returns
+    # average exactly the way unfixed leverage/ROIC used to (e.g. HP's ROE of -303%, from
+    # negative book equity, dragging the whole "returns" read sharply negative even though its
+    # ROCE and ROIC are both genuinely solid). Exclude it from the blend when equity isn't a
+    # meaningful base; the negative-equity risk itself is still captured separately by
+    # leverage_rating above, so this isn't hiding risk, just not double-counting a broken ROE.
+    roe_now = None if equity_thin else fd.roe()
+    returns_avg = (fd.roce() + fd.roic()) / 2 if roe_now is None else (roe_now + fd.roce() + fd.roic()) / 3
     returns_rating = _bucket(returns_avg, 0.20, 0.10)
     dso_now, dso_prev = fd.receivable_days(), fd.receivable_days(-2) if len(fd.sales) > 1 else fd.receivable_days()
     asset_quality_rating = "Weak" if dso_now > dso_prev * 1.2 else "Strong"
@@ -563,7 +583,7 @@ def module_10_balance_sheet(fd: FinancialData) -> dict:
     computed = {
         "net_cash_cr": net_cash,
         "leverage_rating": leverage_rating,
-        "roe": fd.roe(),
+        "roe": roe_now,
         "roce": fd.roce(),
         "roic": fd.roic(),
         "returns_rating": returns_rating,
@@ -680,9 +700,17 @@ def module_12_roic_runway(fd: FinancialData, brief: Brief) -> dict:
     if years_back > 0:
         nopat_now = fd.ebit[-1] * 0.75
         nopat_then = fd.ebit[-1 - years_back] * 0.75
-        ic_now = fd.equity[-1] + fd.debt[-1] - fd.cash_and_bank[-1] - fd.investments[-1]
-        ic_then = fd.equity[-1 - years_back] + fd.debt[-1 - years_back] - fd.cash_and_bank[-1 - years_back] - fd.investments[-1 - years_back]
-        if ic_now != ic_then:
+        ic_now = fd.point_invested_capital(-1)
+        ic_then = fd.point_invested_capital(-1 - years_back)
+        capital_base = fd.equity[-1] + fd.debt[-1]
+        # Materiality guard: even once each snapshot is individually floored (via
+        # point_invested_capital), the *difference* between two snapshots can itself be a
+        # near-zero sliver relative to the company's capital base, which still blows up
+        # (nopat_now-nopat_then)/(ic_now-ic_then) into an absurd swing (this produced HP's
+        # -132% incremental ROIC). Only trust the ratio when the delta is at least
+        # THIN_CAPITAL_FLOOR of the current capital-employed base; otherwise leave it
+        # unavailable rather than report a number driven by a near-zero denominator.
+        if capital_base > 0 and abs(ic_now - ic_then) >= capital_base * THIN_CAPITAL_FLOOR:
             incremental_roic = (nopat_now - nopat_then) / (ic_now - ic_then)
 
     reinvestment_rate = None
@@ -964,7 +992,8 @@ def main(xlsx_path: str, brief_path: str) -> None:
     _section("Module 10 — Balance Sheet Analysis")
     balance_sheet = module_10_balance_sheet(fd)
     print(f"Net cash: {balance_sheet['net_cash_cr']:,.2f} {fd.unit_label}  |  Leverage: {balance_sheet['leverage_rating']}")
-    print(f"ROE: {balance_sheet['roe']:.1%}  ROCE: {balance_sheet['roce']:.1%}  ROIC: {balance_sheet['roic']:.1%} "
+    roe_str = f"{balance_sheet['roe']:.1%}" if balance_sheet["roe"] is not None else "N/M"
+    print(f"ROE: {roe_str}  ROCE: {balance_sheet['roce']:.1%}  ROIC: {balance_sheet['roic']:.1%} "
           f"-> Returns: {balance_sheet['returns_rating']}")
     print(f"Receivable days: {balance_sheet['receivable_days_prior']:.0f} -> {balance_sheet['receivable_days_latest']:.0f} "
           f"-> Asset quality: {balance_sheet['asset_quality_rating']}")

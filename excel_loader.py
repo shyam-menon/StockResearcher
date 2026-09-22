@@ -24,6 +24,11 @@ from pathlib import Path
 
 import openpyxl
 
+# Shared "is this denominator too thin to trust" floor -- see FinancialData.roic()'s docstring.
+# Used both there and by module_12_roic_runway's incremental-ROIC guard in
+# stock_research_cookbook.py, which imports this constant rather than re-deriving its own copy.
+THIN_CAPITAL_FLOOR = 0.2
+
 # Row anchors in the "Data Sheet" tab (fixed by the template, same for every company).
 _PL_HEADER_ROW = 16
 _PL_ROWS = {
@@ -121,6 +126,14 @@ class FinancialData:
         b = series[idx - 1] if len(series) > 1 else series[idx]
         return (a + b) / 2
 
+    def _effective_capital(self, invested: float, employed: float) -> float:
+        """Substitute capital employed (equity + debt) for cash-excluded invested capital
+        whenever the latter has shrunk below THIN_CAPITAL_FLOOR of capital employed -- see
+        roic()'s docstring for why a thin cash-excluded base produces an unstable ratio."""
+        if employed and invested < employed * THIN_CAPITAL_FLOOR:
+            return employed
+        return invested
+
     @property
     def latest_year(self) -> datetime:
         return self.fiscal_year_ends[-1]
@@ -163,15 +176,28 @@ class FinancialData:
     def roic(self, idx: int = -1, tax_rate: float = 0.25) -> float:
         """NOPAT / average invested capital, excluding surplus cash & investments.
 
+        Note on scope: this "financing-side" definition of invested capital (equity + debt -
+        cash - investments) is an approximation. A more precise "operating-side" ROIC (net
+        working capital + net PP&E + other operating assets - operating liabilities) would be
+        a better long-term definition, but the screener.in-derived data this class is built
+        from doesn't currently carry enough granular operating-balance-sheet detail (e.g.
+        asset-level PP&E, itemized operating liabilities) to build that reliably. The
+        capital-employed fallback below is a reasonable interim approximation, not a final
+        design choice -- this is a documented non-goal for now, not an oversight.
+
         Falls back to NOPAT / average capital employed (equity + debt, i.e. the same base
         ROCE uses, without excluding cash) when cash-excluded invested capital is too thin --
-        below 20% of capital employed -- to be a stable denominator. That happens for a
-        cash-rich, asset-light company whose cash and investments are nearly as large as its
-        whole equity + debt base (Apple, CDSL): excluding "surplus" cash then leaves a tiny or
-        even negative sliver of capital, so a small year-to-year swing in that sliver produces
-        a wildly inflated or negative ratio (425% for Apple, 145% for CDSL) rather than a
-        genuine efficiency signal. The 20% floor is judgment, not a precise line -- it exists
-        to catch the near-zero-denominator case, not to relitigate every borderline company.
+        below THIN_CAPITAL_FLOOR of capital employed -- to be a stable denominator. That
+        happens for a cash-rich, asset-light company whose cash and investments are nearly as
+        large as its whole equity + debt base (Apple, CDSL): excluding "surplus" cash then
+        leaves a tiny or even negative sliver of capital, so a small year-to-year swing in
+        that sliver can swing the ratio to an extreme value (425% for Apple, 145% for CDSL). A
+        very high ROIC is not inherently impossible -- a genuinely capital-light, high-margin
+        business can legitimately earn one -- so a result this sensitive to a near-zero
+        denominator warrants scrutiny of the denominator, not an assumption that the business
+        is fraudulent or the number itself is fake. The floor is judgment, not a precise line
+        -- it exists to catch the near-zero-denominator case, not to relitigate every
+        borderline company.
         """
         invested_capital = [
             e + d - c - inv
@@ -182,9 +208,19 @@ class FinancialData:
 
         avg_invested = self._avg(invested_capital, idx)
         avg_employed = self._avg(capital_employed, idx)
-        if avg_employed and avg_invested < avg_employed * 0.2:
-            return nopat / avg_employed
-        return nopat / avg_invested
+        return nopat / self._effective_capital(avg_invested, avg_employed)
+
+    def point_invested_capital(self, idx: int = -1) -> float:
+        """Cash-excluded invested capital at a single fiscal-year point (not the 2-year
+        trailing average _avg() produces) -- for callers that need two specific-year
+        snapshots to compute a level *change* between them (e.g. incremental ROIC), where an
+        averaged figure at each point would blur in a year that isn't part of the multi-year
+        window actually being measured. Applies the same THIN_CAPITAL_FLOOR substitution as
+        roic(), evaluated at this single point.
+        """
+        invested = self.equity[idx] + self.debt[idx] - self.cash_and_bank[idx] - self.investments[idx]
+        employed = self.equity[idx] + self.debt[idx]
+        return self._effective_capital(invested, employed)
 
     def debt_to_equity(self, idx: int = -1) -> float:
         return self.debt[idx] / self.equity[idx]

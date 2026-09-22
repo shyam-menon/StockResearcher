@@ -624,6 +624,16 @@
       }
     }
   },
+  "58bcc565418f95dfa63477118d2c0263ee9ab3534e598c8efdc6604dd2ab46dd": {
+    "runway": {
+      "kind": "choice",
+      "probabilities": {
+        "Short": 0.05,
+        "Medium": 0.63,
+        "Long": 0.32
+      }
+    }
+  },
   "5953275619ed5e018e2d5e5456ddd6f7c34deabe4cee7c46c060186aec8ed45c": {
     "pricing_power": {
       "kind": "noul",
@@ -646,6 +656,16 @@
       }
     }
   },
+  "5ea0765c18cde0790b08531f986bf0ec30763a47814761736d0f195a687aae32": {
+    "runway": {
+      "kind": "choice",
+      "probabilities": {
+        "Short": 0.02,
+        "Long": 0.4,
+        "Medium": 0.58
+      }
+    }
+  },
   "608a5e70e871bb2c9eae4a60c4d080dac290f21031717200a95b692df73ae68c": {
     "verdict": {
       "kind": "choice",
@@ -654,6 +674,17 @@
         "VeryStrong": 0.57,
         "Adequate": 0.01,
         "Stressed": 0.0
+      }
+    }
+  },
+  "615cd140d30f6a7ea84af2c38dc70eddceeb41be90fde4c732968aff905f0c29": {
+    "verdict": {
+      "kind": "choice",
+      "probabilities": {
+        "Adequate": 0.56,
+        "Stressed": 0.03,
+        "VeryStrong": 0.0,
+        "Strong": 0.41
       }
     }
   },
@@ -1115,6 +1146,16 @@
         "AntiFragile": 0.1,
         "Robust": 0.79,
         "Fragile": 0.11
+      }
+    }
+  },
+  "a092e4d9ec9d5478daa37f9dc7a6cc6ea6afbb095c616898fff874de0a1d85aa": {
+    "runway": {
+      "kind": "choice",
+      "probabilities": {
+        "Short": 0.11,
+        "Medium": 0.86,
+        "Long": 0.03
       }
     }
   },
@@ -1751,6 +1792,16 @@
         "Short": 0.02,
         "Medium": 0.72,
         "Long": 0.26
+      }
+    }
+  },
+  "f6de45ff30f1bae66af4379f02181181d353012e3b9d02e12779ad071d2edb40": {
+    "runway": {
+      "kind": "choice",
+      "probabilities": {
+        "Long": 0.03,
+        "Medium": 0.05,
+        "Short": 0.92
       }
     }
   },

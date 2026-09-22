@@ -200,7 +200,7 @@ def render_html(
         _section("10 &middot; Balance Sheet Analysis", [
             ("Net cash", f"{balance_sheet['net_cash_cr']:,.2f} {fd.unit_label}"),
             ("Leverage", _badge(balance_sheet["leverage_rating"])),
-            ("ROE / ROCE / ROIC", f"{balance_sheet['roe']:.1%} / {balance_sheet['roce']:.1%} / {balance_sheet['roic']:.1%}"),
+            ("ROE / ROCE / ROIC", f"{_pct(balance_sheet['roe'])} / {balance_sheet['roce']:.1%} / {balance_sheet['roic']:.1%}"),
             ("Returns rating", _badge(balance_sheet["returns_rating"])),
             ("Receivable days (prior -> latest)",
              f"{balance_sheet['receivable_days_prior']:.0f} &rarr; {balance_sheet['receivable_days_latest']:.0f}"),
