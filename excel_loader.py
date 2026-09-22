@@ -161,13 +161,30 @@ class FinancialData:
         return self.ebit[idx] / self._avg(capital_employed, idx)
 
     def roic(self, idx: int = -1, tax_rate: float = 0.25) -> float:
-        """NOPAT / average invested capital, excluding surplus cash & investments."""
+        """NOPAT / average invested capital, excluding surplus cash & investments.
+
+        Falls back to NOPAT / average capital employed (equity + debt, i.e. the same base
+        ROCE uses, without excluding cash) when cash-excluded invested capital is too thin --
+        below 20% of capital employed -- to be a stable denominator. That happens for a
+        cash-rich, asset-light company whose cash and investments are nearly as large as its
+        whole equity + debt base (Apple, CDSL): excluding "surplus" cash then leaves a tiny or
+        even negative sliver of capital, so a small year-to-year swing in that sliver produces
+        a wildly inflated or negative ratio (425% for Apple, 145% for CDSL) rather than a
+        genuine efficiency signal. The 20% floor is judgment, not a precise line -- it exists
+        to catch the near-zero-denominator case, not to relitigate every borderline company.
+        """
         invested_capital = [
             e + d - c - inv
             for e, d, c, inv in zip(self.equity, self.debt, self.cash_and_bank, self.investments)
         ]
+        capital_employed = [e + d for e, d in zip(self.equity, self.debt)]
         nopat = self.ebit[idx] * (1 - tax_rate)
-        return nopat / self._avg(invested_capital, idx)
+
+        avg_invested = self._avg(invested_capital, idx)
+        avg_employed = self._avg(capital_employed, idx)
+        if avg_employed and avg_invested < avg_employed * 0.2:
+            return nopat / avg_employed
+        return nopat / avg_invested
 
     def debt_to_equity(self, idx: int = -1) -> float:
         return self.debt[idx] / self.equity[idx]

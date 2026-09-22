@@ -149,6 +149,17 @@
       "score": 2.79
     }
   },
+  "072f961bc67846681679fdd01189914bddf5b973d6c17cf525b9e96e1fdced78": {
+    "verdict": {
+      "kind": "choice",
+      "probabilities": {
+        "Strong": 0.44,
+        "Stressed": 0.01,
+        "VeryStrong": 0.53,
+        "Adequate": 0.02
+      }
+    }
+  },
   "0b1cbc5b4c235c20078f392e584cf3650c2d3c3e944a549bd2aaf14cb3462fcd": {
     "runway": {
       "kind": "choice",
@@ -230,6 +241,17 @@
         "Negative": 0.0,
         "Neutral": 1.0,
         "Positive": 0.0
+      }
+    }
+  },
+  "11919a8e279ef3900da97b81f2be3b11fc816c7dfe764ffcf099434ec3c3bc77": {
+    "verdict": {
+      "kind": "choice",
+      "probabilities": {
+        "VeryStrong": 0.91,
+        "Stressed": 0.0,
+        "Adequate": 0.0,
+        "Strong": 0.09
       }
     }
   },
@@ -350,6 +372,17 @@
         "Recurring": 0.25,
         "Project-based repeat": 0.56,
         "OneTime": 0.19
+      }
+    }
+  },
+  "2a579be3cfcf54fe328e511917b8480074bb9f298928e23225e1d6bdbddb0ca7": {
+    "verdict": {
+      "kind": "choice",
+      "probabilities": {
+        "Adequate": 0.01,
+        "Stressed": 0.0,
+        "Strong": 0.55,
+        "VeryStrong": 0.44
       }
     }
   },
@@ -610,6 +643,17 @@
         "Recurring": 0.0,
         "Project-based repeat": 0.75,
         "OneTime": 0.25
+      }
+    }
+  },
+  "608a5e70e871bb2c9eae4a60c4d080dac290f21031717200a95b692df73ae68c": {
+    "verdict": {
+      "kind": "choice",
+      "probabilities": {
+        "Strong": 0.42,
+        "VeryStrong": 0.57,
+        "Adequate": 0.01,
+        "Stressed": 0.0
       }
     }
   },
@@ -1085,6 +1129,17 @@
       }
     }
   },
+  "ab1a4b3126a61c5e9d27fec251609cdb980c96c45c780914f6d5205b017fe2a6": {
+    "verdict": {
+      "kind": "choice",
+      "probabilities": {
+        "Adequate": 0.2,
+        "VeryStrong": 0.0,
+        "Strong": 0.01,
+        "Stressed": 0.79
+      }
+    }
+  },
   "ac063cae3195d71ace209bd8c6abb41e5c05ba6d340fd812396027c6f37b8103": {
     "outlook_12m": {
       "kind": "choice",
@@ -1219,6 +1274,17 @@
         "Mixed": 0.98,
         "Recurring": 0.0,
         "OneTime": 0.02
+      }
+    }
+  },
+  "b6055e1e400173e2bcc9f98b3dea5ca168c3df57883e1ef517a60a63ced5186b": {
+    "verdict": {
+      "kind": "choice",
+      "probabilities": {
+        "Adequate": 0.04,
+        "Strong": 0.47,
+        "Stressed": 0.02,
+        "VeryStrong": 0.47
       }
     }
   },
@@ -1391,6 +1457,12 @@
       }
     }
   },
+  "d1f1b2dda8775b7bed6d28006b3c0cf5861389ecc4ae6dee44031f063e125dee": {
+    "capital_allocation_grade": {
+      "kind": "score",
+      "score": 1.0
+    }
+  },
   "d4ecc29d25aa7def9e715988efcf5b5d00fed5ecae2e9e074ef67b9d914e4ea4": {
     "risk_competition": {
       "kind": "choice",
@@ -1533,6 +1605,12 @@
         "Yellow": 0.56,
         "Green": 0.0
       }
+    }
+  },
+  "dbbb4cd2fefdca9498b64d8808cdb24971b9895e991f72733bd6feb70e62b5d0": {
+    "capital_allocation_grade": {
+      "kind": "score",
+      "score": 2.31
     }
   },
   "e238265462771e6acc6595f5a8e7083c9604e7149a465d90e4fcf8fb366f6e12": {

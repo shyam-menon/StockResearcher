@@ -538,7 +538,23 @@ def module_09_ai_risk(brief: Brief) -> dict:
 
 def module_10_balance_sheet(fd: FinancialData) -> dict:
     net_cash = fd.cash_and_bank[-1] + fd.investments[-1] - fd.debt[-1]
-    leverage_rating = "Strong" if fd.is_debt_free() else _bucket(fd.debt_to_equity(), 0.3, 0.7, higher_is_better=False)
+    equity_now = fd.equity[-1]
+
+    # debt/equity breaks for a company whose book equity has been shrunk (or made negative) by
+    # years of buybacks: the same distortion flips the ratio's sign in opposite directions for
+    # different companies -- e.g. it read as "Green" (best) for HP, whose equity is negative,
+    # and "Red" (worst) for Apple, whose equity is thin-but-positive, even though HP carries net
+    # debt and Apple carries net cash. Net cash/debt itself doesn't depend on equity at all, so
+    # check that first; only fall back to debt/equity once equity is a large-enough, positive
+    # denominator for the ratio to mean what it's supposed to.
+    if fd.is_debt_free() or net_cash >= 0:
+        leverage_rating = "Strong"
+    elif equity_now <= 0 or equity_now < fd.debt[-1] * 0.2:
+        net_debt_to_ebit = -net_cash / fd.ebit[-1] if fd.ebit[-1] else None
+        leverage_rating = _bucket(net_debt_to_ebit, 1.0, 3.0, higher_is_better=False)
+    else:
+        leverage_rating = _bucket(fd.debt_to_equity(), 0.3, 0.7, higher_is_better=False)
+
     returns_avg = (fd.roe() + fd.roce() + fd.roic()) / 3
     returns_rating = _bucket(returns_avg, 0.20, 0.10)
     dso_now, dso_prev = fd.receivable_days(), fd.receivable_days(-2) if len(fd.sales) > 1 else fd.receivable_days()
