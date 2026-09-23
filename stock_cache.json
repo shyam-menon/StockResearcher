@@ -693,6 +693,33 @@
       }
     }
   },
+  "5ecb7f92ad6111bb27690d35f5600cd77c4b6e1a9ba44096fca497b65f467ec5": {
+    "accounting_concern": {
+      "kind": "noul",
+      "p_yes": 0.1
+    },
+    "capital_allocation_concern": {
+      "kind": "noul",
+      "p_yes": 0.14
+    },
+    "pledging_concern": {
+      "kind": "noul",
+      "p_yes": 0.04
+    },
+    "related_party_concern": {
+      "kind": "noul",
+      "p_yes": 0.14
+    },
+    "verdict": {
+      "kind": "choice",
+      "probabilities": {
+        "InsufficientEvidence": 0.13,
+        "Weak": 0.0,
+        "Adequate": 0.81,
+        "Strong": 0.05
+      }
+    }
+  },
   "608a5e70e871bb2c9eae4a60c4d080dac290f21031717200a95b692df73ae68c": {
     "verdict": {
       "kind": "choice",
@@ -1119,6 +1146,44 @@
       }
     }
   },
+  "99b814bb0d10d30ce9e8b213d48ceb045604faad0772bb9ac1060b625af895ab": {
+    "risk_competition": {
+      "kind": "choice",
+      "probabilities": {
+        "Unknown": 0.08,
+        "Green": 0.0,
+        "Yellow": 0.66,
+        "Red": 0.26
+      }
+    },
+    "risk_concentration": {
+      "kind": "choice",
+      "probabilities": {
+        "Green": 0.08,
+        "Unknown": 0.0,
+        "Yellow": 0.81,
+        "Red": 0.11
+      }
+    },
+    "risk_disruption": {
+      "kind": "choice",
+      "probabilities": {
+        "Green": 0.0,
+        "Unknown": 0.0,
+        "Yellow": 0.97,
+        "Red": 0.03
+      }
+    },
+    "risk_outside_forces": {
+      "kind": "choice",
+      "probabilities": {
+        "Unknown": 0.0,
+        "Green": 0.0,
+        "Yellow": 0.99,
+        "Red": 0.01
+      }
+    }
+  },
   "9b0b9cd2b3bab89d823d2b95adfe66c1995e298fcdf7e271263c386eccad9fed": {
     "driver_acquisitions": {
       "kind": "choice",
@@ -1243,6 +1308,16 @@
         "VeryStrong": 0.64,
         "Strong": 0.35,
         "Stressed": 0.0
+      }
+    }
+  },
+  "a53afd1af2d33a3ae87c2cae415898e14769c5cd4b3adad3672ed48eafe4457d": {
+    "runway": {
+      "kind": "choice",
+      "probabilities": {
+        "Long": 0.08,
+        "Medium": 0.83,
+        "Short": 0.09
       }
     }
   },
@@ -1596,6 +1671,63 @@
       }
     }
   },
+  "c9d8731741194fef39f671ffdee631e050facdbd72653128577f42ef94b4646f": {
+    "ai_business_model": {
+      "kind": "choice",
+      "probabilities": {
+        "Robust": 0.87,
+        "AntiFragile": 0.12,
+        "Fragile": 0.01
+      }
+    },
+    "ai_liability": {
+      "kind": "choice",
+      "probabilities": {
+        "Robust": 0.99,
+        "AntiFragile": 0.0,
+        "Fragile": 0.01
+      }
+    },
+    "ai_network": {
+      "kind": "choice",
+      "probabilities": {
+        "Robust": 0.56,
+        "AntiFragile": 0.0,
+        "Fragile": 0.44
+      }
+    },
+    "ai_physical_world": {
+      "kind": "choice",
+      "probabilities": {
+        "Robust": 1.0,
+        "AntiFragile": 0.0,
+        "Fragile": 0.0
+      }
+    }
+  },
+  "cf100bee6c7f8dd6c64c602ab8b3a4c62493cbdf216c72ee5b6f2773b7077fb2": {
+    "pricing_power": {
+      "kind": "noul",
+      "p_yes": 0.25
+    },
+    "recession_behavior": {
+      "kind": "choice",
+      "probabilities": {
+        "Resilient": 0.01,
+        "ModeratelyCyclical": 0.54,
+        "Cyclical": 0.45
+      }
+    },
+    "revenue_pattern": {
+      "kind": "choice",
+      "probabilities": {
+        "Recurring": 0.0,
+        "Project-based repeat": 0.0,
+        "OneTime": 0.16,
+        "Mixed": 0.84
+      }
+    }
+  },
   "d1f1b2dda8775b7bed6d28006b3c0cf5861389ecc4ae6dee44031f063e125dee": {
     "capital_allocation_grade": {
       "kind": "score",
@@ -1637,6 +1769,44 @@
         "Green": 0.02,
         "Yellow": 0.97,
         "Unknown": 0.0
+      }
+    }
+  },
+  "d5e3ba808c5af210f7c5cbfb7825c8e8245aec4cc1f7350ad32e3888549a752e": {
+    "direction": {
+      "kind": "choice",
+      "probabilities": {
+        "Narrowing": 0.09,
+        "Stable": 0.91,
+        "Widening": 0.0
+      }
+    },
+    "present_counter_positioning": {
+      "kind": "noul",
+      "p_yes": 0.21
+    },
+    "present_intangible_assets": {
+      "kind": "noul",
+      "p_yes": 0.4
+    },
+    "present_low_cost_production": {
+      "kind": "noul",
+      "p_yes": 0.14
+    },
+    "present_network_effects": {
+      "kind": "noul",
+      "p_yes": 0.1
+    },
+    "present_switching_costs": {
+      "kind": "noul",
+      "p_yes": 0.3
+    },
+    "size": {
+      "kind": "choice",
+      "probabilities": {
+        "Narrow": 0.98,
+        "Wide": 0.01,
+        "None": 0.01
       }
     }
   },
@@ -1912,6 +2082,24 @@
       }
     }
   },
+  "f5d16472c620e1331a7c600902d2c4d66e58c7be29f66962da3ad6f3dc3a68ce": {
+    "outlook_12m": {
+      "kind": "choice",
+      "probabilities": {
+        "Bearish": 0.0,
+        "Bullish": 0.15,
+        "Neutral": 0.85
+      }
+    },
+    "sentiment_tone": {
+      "kind": "choice",
+      "probabilities": {
+        "Positive": 0.04,
+        "Negative": 0.0,
+        "Neutral": 0.96
+      }
+    }
+  },
   "f6860f1654e53e7e21e1fd5ea31b3f589cd8104d86dc9d850e711695a8724f9b": {
     "runway": {
       "kind": "choice",
@@ -1929,6 +2117,78 @@
         "Long": 0.03,
         "Medium": 0.05,
         "Short": 0.92
+      }
+    }
+  },
+  "f7c834850f1589a4d498ecff1a1938ecc3383fbb84c077af9f5329d54d21df4b": {
+    "driver_acquisitions": {
+      "kind": "choice",
+      "probabilities": {
+        "Moderate": 0.0,
+        "Weak": 0.13,
+        "InsufficientEvidence": 0.86,
+        "NotApplicable": 0.01,
+        "Strong": 0.0
+      }
+    },
+    "driver_customer_retention": {
+      "kind": "choice",
+      "probabilities": {
+        "Moderate": 0.06,
+        "Weak": 0.03,
+        "InsufficientEvidence": 0.91,
+        "NotApplicable": 0.0,
+        "Strong": 0.0
+      }
+    },
+    "driver_distribution_channels": {
+      "kind": "choice",
+      "probabilities": {
+        "Moderate": 0.13,
+        "Weak": 0.28,
+        "InsufficientEvidence": 0.58,
+        "NotApplicable": 0.01,
+        "Strong": 0.0
+      }
+    },
+    "driver_geographic_expansion": {
+      "kind": "choice",
+      "probabilities": {
+        "Moderate": 0.91,
+        "Weak": 0.0,
+        "InsufficientEvidence": 0.01,
+        "NotApplicable": 0.0,
+        "Strong": 0.08
+      }
+    },
+    "driver_new_products": {
+      "kind": "choice",
+      "probabilities": {
+        "Moderate": 0.77,
+        "Weak": 0.01,
+        "InsufficientEvidence": 0.05,
+        "NotApplicable": 0.0,
+        "Strong": 0.17
+      }
+    },
+    "driver_pricing_power": {
+      "kind": "choice",
+      "probabilities": {
+        "Moderate": 0.29,
+        "Weak": 0.7,
+        "InsufficientEvidence": 0.01,
+        "NotApplicable": 0.0,
+        "Strong": 0.0
+      }
+    },
+    "driver_sales_marketing": {
+      "kind": "choice",
+      "probabilities": {
+        "Moderate": 0.0,
+        "Weak": 0.0,
+        "InsufficientEvidence": 1.0,
+        "Strong": 0.0,
+        "NotApplicable": 0.0
       }
     }
   },
