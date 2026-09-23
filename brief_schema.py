@@ -41,6 +41,7 @@ class Brief:
     ticker: str | None = None  # Yahoo Finance ticker symbol; used only when the Excel export is absent
     valuation_units: dict | None = None  # {"currency": ..., "unit": "crore"|"million"}; checked against the loader's unit
     capital_return_evidence: dict | None = None  # buyback/dividend facts from filings; shown in the report
+    governance_evidence: dict | None = None  # promoter/management quality facts from filings; feeds Module 15
 
 
 def load_brief(json_path: str | Path) -> Brief:
@@ -103,22 +104,35 @@ def load_brief(json_path: str | Path) -> Brief:
         ticker=data.get("ticker"),
         valuation_units=valuation_units,
         capital_return_evidence=data.get("capital_return_evidence"),
+        governance_evidence=data.get("governance_evidence"),
     )
 
 
 def _normalize_scenario(json_path, name: str, s: dict) -> dict:
     """Return a scenario with canonical keys, accepting the legacy names
-    (`probability`, `fy_plus5_pat_cr`) so older briefs keep working."""
+    (`probability`, `fy_plus5_pat_cr`) so older briefs keep working.
+
+    A scenario's FY+5 PAT can be given either directly (`fy_plus5_pat`, the legacy
+    path) or decomposed into `revenue_cagr_pct` + `future_net_margin_pct`, which
+    module_13_reverse_valuation then multiplies out in code -- this makes the
+    revenue-growth vs. margin assumption visible separately instead of one opaque
+    PAT number. If both are present, the decomposed fields win silently and
+    `fy_plus5_pat` is ignored for that scenario."""
     weight = s.get("scenario_weight", s.get("probability"))
     pat = s.get("fy_plus5_pat", s.get("fy_plus5_pat_cr"))
-    if weight is None or pat is None or "exit_pe" not in s:
+    revenue_cagr_pct = s.get("revenue_cagr_pct")
+    future_net_margin_pct = s.get("future_net_margin_pct")
+    has_decomposed = revenue_cagr_pct is not None and future_net_margin_pct is not None
+    if weight is None or "exit_pe" not in s or (pat is None and not has_decomposed):
         raise ValueError(
-            f"Brief {json_path} valuation_scenarios.{name} needs scenario_weight, "
-            f"fy_plus5_pat and exit_pe"
+            f"Brief {json_path} valuation_scenarios.{name} needs scenario_weight, exit_pe, "
+            f"and either fy_plus5_pat or both revenue_cagr_pct and future_net_margin_pct"
         )
     return {
         "scenario_weight": weight,
         "fy_plus5_pat": pat,
+        "revenue_cagr_pct": revenue_cagr_pct,
+        "future_net_margin_pct": future_net_margin_pct,
         "exit_pe": s["exit_pe"],
         "assumption": s.get("assumption", ""),
         # Optional: absent means shares held flat and no dividends counted (legacy behaviour).

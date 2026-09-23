@@ -590,7 +590,7 @@ def module_10_balance_sheet(fd: FinancialData) -> dict:
         "receivable_days_latest": dso_now,
         "receivable_days_prior": dso_prev,
         "asset_quality_rating": asset_quality_rating,
-        "promoter_quality_rating": "Not available (screener export has no shareholding pattern; supply via brief if needed)",
+        "promoter_quality_rating": "See Module 15 — Governance",
     }
 
     state = {"balance_sheet_ratios": {k: v for k, v in computed.items() if not isinstance(v, str) or "rating" in k}}
@@ -772,10 +772,20 @@ def module_13_reverse_valuation(fd: FinancialData, brief: Brief) -> dict:
             f"{fd.unit_label!r}; fy_plus5_pat must use the loader's unit"
         )
 
+    current_revenue = fd.sales[-1]
+
     scenarios = {}
     weighted_cagr = 0.0
     for name, s in brief.valuation_scenarios.items():
-        future_pat = s["fy_plus5_pat"]  # in fd.unit_label units (Cr for Excel/India, M for online)
+        # Decomposed path (revenue CAGR x future margin) wins silently over a direct
+        # fy_plus5_pat when both are present -- see brief_schema._normalize_scenario.
+        used_decomposed_pat = s["revenue_cagr_pct"] is not None and s["future_net_margin_pct"] is not None
+        if used_decomposed_pat:
+            future_revenue = current_revenue * (1 + s["revenue_cagr_pct"] / 100) ** 5
+            future_pat = future_revenue * (s["future_net_margin_pct"] / 100)
+        else:
+            future_revenue = None
+            future_pat = s["fy_plus5_pat"]  # in fd.unit_label units (Cr for Excel/India, M for online)
         # Net buybacks (negative change) shrink the share count; absent field means flat.
         future_shares = shares * (1 + s["annual_share_count_change_pct"] / 100) ** 5
         future_eps = future_pat * fd.unit_divisor / future_shares
@@ -803,6 +813,13 @@ def module_13_reverse_valuation(fd: FinancialData, brief: Brief) -> dict:
             "annual_dividend_per_share": s["annual_dividend_per_share"],
             "current_shares": shares,
             "assumption": s.get("assumption", ""),
+            # Revenue -> PAT decomposition (visible only when the brief used the
+            # decomposed path instead of a direct fy_plus5_pat).
+            "used_decomposed_pat": used_decomposed_pat,
+            "current_revenue": current_revenue,
+            "future_revenue": future_revenue,
+            "revenue_cagr_pct": s["revenue_cagr_pct"],
+            "future_net_margin_pct": s["future_net_margin_pct"],
         }
         weighted_cagr += s["scenario_weight"] * total_cagr
 
@@ -859,19 +876,30 @@ def _financial_quality_score(metrics: dict, balance_sheet: dict, cash_flow: dict
     return round((metrics_points + bs_points + grade_points) / 9 * 10, 1)
 
 
+# A "Weak" overall governance verdict forces Reject on its own, independent of
+# business_quality/financial_quality -- a great business/financials/valuation can
+# still destroy shareholder wealth through poor capital allocation or governance,
+# so this shouldn't be diluted into a blended score where good scores elsewhere
+# could mask it. "InsufficientEvidence" is deliberately excluded here (neutral,
+# same treatment as Module 6's "Unrated") -- not researching governance shouldn't
+# by itself reject a stock.
+GOVERNANCE_REJECT_LEVELS = {"Weak"}
+
+
 def module_14_decision(
     phase: dict, moat: dict, growth: dict, metrics: dict, risk: dict,
     balance_sheet: dict, cash_flow: dict, roic_runway: dict, valuation: dict, ai_risk: dict,
-    company_name: str, currency_symbol: str = "₹",
+    governance: dict, company_name: str, currency_symbol: str = "₹",
 ) -> dict:
     business_quality = _business_quality_score(moat, growth, risk, ai_risk)
     financial_quality = _financial_quality_score(metrics, balance_sheet, cash_flow)
     valuation_verdict = "Attractive" if valuation["meets_hurdle"] and valuation["margin_of_safety"] != "Low" else "Not yet attractive"
+    governance_forces_reject = governance["verdict"] in GOVERNANCE_REJECT_LEVELS
 
     # business_quality, financial_quality, and valuation_verdict are all already fully
     # computed numbers by this point -- there's no genuine ambiguity left for Jev to
     # resolve, so the final call is an explicit, reproducible rule instead of a Choice.
-    if business_quality < BUSINESS_QUALITY_MIN or financial_quality < FINANCIAL_QUALITY_MIN:
+    if business_quality < BUSINESS_QUALITY_MIN or financial_quality < FINANCIAL_QUALITY_MIN or governance_forces_reject:
         decision = "Reject"
     elif valuation_verdict != "Attractive":
         decision = "Watchlist"
@@ -903,6 +931,93 @@ def module_14_decision(
         "decision": decision,
         "kill_criteria": kill_criteria,
         "one_line_thesis": one_line_thesis,
+    }
+
+
+# --------------------------------------------------------------------------
+# Module 15 — Governance & Capital Stewardship (TypeSafe)
+#
+# Not part of the original 14-module framework spec -- an addition beyond it,
+# numbered 15 to make that explicit. Fills the gap Module 10's placeholder
+# promoter_quality_rating flagged: a screener.in export has no shareholding
+# pattern, pledging, or related-party data, so this needs brief-supplied
+# evidence like the other qualitative modules.
+# --------------------------------------------------------------------------
+
+GOVERNANCE_CONCERN_FIELDS = ("pledging", "related_party", "accounting", "capital_allocation")
+# Mirrors Module 3's "assume No Moat, require hard evidence to upgrade" guardrail:
+# assume no governance concern, require the model to be meaningfully more
+# confident than a coin flip before flagging one as present.
+GOVERNANCE_CONCERN_THRESHOLD = 0.65
+
+_GOVERNANCE_NOT_DISCLOSED = {"", "Not disclosed", "Not disclosed in the provided filings", "None"}
+
+
+def _apply_governance_consistency_floor(verdict: str, any_red_flag: bool) -> str:
+    """Cap (never raise), same style as _apply_moat_consistency_floor -- a
+    confirmed red flag prevents a "Strong" verdict from standing even if Jev's
+    overall Choice call came back Strong."""
+    if verdict == "Strong" and any_red_flag:
+        return "Adequate"
+    return verdict
+
+
+def module_15_governance(brief: Brief) -> dict:
+    evidence = brief.governance_evidence
+    if not evidence or all(str(v).strip() in _GOVERNANCE_NOT_DISCLOSED for v in evidence.values()):
+        return {
+            "verdict": "InsufficientEvidence",
+            "verdict_raw": "InsufficientEvidence",
+            "verdict_downgraded": False,
+            "verdict_confidence": None,
+            "red_flags": {field: False for field in GOVERNANCE_CONCERN_FIELDS},
+            "any_red_flag": False,
+        }
+
+    state = {"governance_evidence": evidence}
+    questions = {
+        "pledging_concern": {
+            "kind": "noul",
+            "instructions": "Does the evidence show concerning promoter share pledging (a material percentage pledged, or a rising trend)?",
+        },
+        "related_party_concern": {
+            "kind": "noul",
+            "instructions": "Does the evidence show related-party transactions that look like value extraction rather than arm's-length business?",
+        },
+        "accounting_concern": {
+            "kind": "noul",
+            "instructions": "Does the evidence show accounting or disclosure red flags (auditor changes, qualified opinions, restatements)?",
+        },
+        "capital_allocation_concern": {
+            "kind": "noul",
+            "instructions": "Does the evidence show a history of value-destructive capital allocation (unrelated diversification, overpriced acquisitions)?",
+        },
+        "verdict": {
+            "kind": "choice",
+            "instructions": "Given all the governance evidence, rate the company's overall promoter/management governance quality.",
+            "criteria": {
+                "Strong": "Clean shareholding, arm's-length related-party dealings, no accounting red flags, and a disciplined capital-allocation record.",
+                "Adequate": "Governance is broadly sound but with at most one moderate concern.",
+                "Weak": "Multiple concerns, or one severe concern (e.g. heavy pledging, a qualified audit opinion, or value-destructive M&A).",
+                "InsufficientEvidence": "The evidence provided doesn't say enough to rate governance either way.",
+            },
+        },
+    }
+    result = ask(state, questions)
+    red_flags = {
+        field: noul_yes(result[f"{field}_concern"], threshold=GOVERNANCE_CONCERN_THRESHOLD)
+        for field in GOVERNANCE_CONCERN_FIELDS
+    }
+    any_red_flag = any(red_flags.values())
+    verdict_raw, verdict_confidence = top_choice(result["verdict"])
+    verdict = _apply_governance_consistency_floor(verdict_raw, any_red_flag)
+    return {
+        "verdict": verdict,
+        "verdict_raw": verdict_raw,
+        "verdict_downgraded": verdict != verdict_raw,
+        "verdict_confidence": verdict_confidence,
+        "red_flags": red_flags,
+        "any_red_flag": any_red_flag,
     }
 
 
@@ -1031,10 +1146,12 @@ def main(xlsx_path: str, brief_path: str) -> None:
           f"(meets 12% hurdle: {valuation['meets_hurdle']})  |  Margin of safety: {valuation['margin_of_safety']}")
     print(f"Entry zone: {valuation['entry_zone']}")
 
+    governance = module_15_governance(brief)
+
     _section("Module 14 — Investment Decision")
     decision = module_14_decision(
-        phase, moat, growth, metrics, risk, balance_sheet, cash_flow, roic_runway, valuation, ai_risk, company,
-        currency_symbol=fd.currency_symbol,
+        phase, moat, growth, metrics, risk, balance_sheet, cash_flow, roic_runway, valuation, ai_risk,
+        governance, company, currency_symbol=fd.currency_symbol,
     )
     print(f"Business Quality: {decision['business_quality']}/10  |  Financial Quality: "
           f"{decision['financial_quality']}/10  |  Valuation: {decision['valuation_verdict']}")
@@ -1043,6 +1160,16 @@ def main(xlsx_path: str, brief_path: str) -> None:
     for kc in decision["kill_criteria"]:
         print(f"  - {kc}")
     print(f"\nOne-line thesis: {decision['one_line_thesis']}")
+
+    _section("Module 15 — Governance & Capital Stewardship")
+    for field, flagged in governance["red_flags"].items():
+        print(f"  {field.replace('_', ' ')} concern: {flagged}")
+    downgrade_note = (
+        f" [Jev verdict: {governance['verdict_raw']}, downgraded on evidence-consistency floor]"
+        if governance["verdict_downgraded"] else ""
+    )
+    confidence_str = f" (p={governance['verdict_confidence']:.2f})" if governance["verdict_confidence"] is not None else ""
+    print(f"Overall governance: {governance['verdict']}{confidence_str}{downgrade_note}")
 
     # Mirror the input side's per-stock folder (Input/<Company>/...) on the output
     # side (Output/<Company>/...), whatever that folder happens to be named.
@@ -1053,7 +1180,7 @@ def main(xlsx_path: str, brief_path: str) -> None:
     out_path.write_text(
         render_html(
             company, fd, phase, business, moat, growth, metrics, risk, val_metrics,
-            sentiment, ai_risk, balance_sheet, cash_flow, roic_runway, valuation, decision,
+            sentiment, ai_risk, balance_sheet, cash_flow, roic_runway, valuation, decision, governance,
         ),
         encoding="utf-8",
     )

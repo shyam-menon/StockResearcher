@@ -375,6 +375,33 @@
       }
     }
   },
+  "20faf9f7a5bba60b0f60f40176e3dd923311a1415e5e7e115e05236de1520a11": {
+    "accounting_concern": {
+      "kind": "noul",
+      "p_yes": 0.06
+    },
+    "capital_allocation_concern": {
+      "kind": "noul",
+      "p_yes": 0.04
+    },
+    "pledging_concern": {
+      "kind": "noul",
+      "p_yes": 0.06
+    },
+    "related_party_concern": {
+      "kind": "noul",
+      "p_yes": 0.09
+    },
+    "verdict": {
+      "kind": "choice",
+      "probabilities": {
+        "Strong": 0.86,
+        "InsufficientEvidence": 0.0,
+        "Weak": 0.0,
+        "Adequate": 0.14
+      }
+    }
+  },
   "2a579be3cfcf54fe328e511917b8480074bb9f298928e23225e1d6bdbddb0ca7": {
     "verdict": {
       "kind": "choice",
@@ -739,6 +766,33 @@
       }
     }
   },
+  "6d96285e47a8035db358c37297724c557839a4cbb86a5522233130be91026b4d": {
+    "accounting_concern": {
+      "kind": "noul",
+      "p_yes": 0.17
+    },
+    "capital_allocation_concern": {
+      "kind": "noul",
+      "p_yes": 0.18
+    },
+    "pledging_concern": {
+      "kind": "noul",
+      "p_yes": 0.97
+    },
+    "related_party_concern": {
+      "kind": "noul",
+      "p_yes": 0.89
+    },
+    "verdict": {
+      "kind": "choice",
+      "probabilities": {
+        "Strong": 0.0,
+        "InsufficientEvidence": 0.0,
+        "Weak": 1.0,
+        "Adequate": 0.0
+      }
+    }
+  },
   "7111c0b77d1222813bd83b77b79c6d07df1cdcaa1d78cca4359a9a054d834585": {
     "direction": {
       "kind": "choice",
@@ -821,6 +875,17 @@
       "score": 2.31
     }
   },
+  "79afad3bfc346bbf47de4f3276c267d6dadcf96816c94ba22630ad83e1d31a97": {
+    "verdict": {
+      "kind": "choice",
+      "probabilities": {
+        "Adequate": 0.0,
+        "VeryStrong": 0.95,
+        "Stressed": 0.0,
+        "Strong": 0.05
+      }
+    }
+  },
   "7a4621a02f210452650f365132f427dbae3eaed7751ebcf34d0aefac36d6fe9b": {
     "verdict": {
       "kind": "choice",
@@ -871,6 +936,17 @@
         "Short": 0.02,
         "Medium": 0.45,
         "Long": 0.53
+      }
+    }
+  },
+  "8284db417a0b30ebb46413ed37800bd1b097a1e46a82c996f07eb13a53bd945a": {
+    "verdict": {
+      "kind": "choice",
+      "probabilities": {
+        "Adequate": 0.51,
+        "Stressed": 0.04,
+        "VeryStrong": 0.0,
+        "Strong": 0.45
       }
     }
   },
@@ -1167,6 +1243,28 @@
         "VeryStrong": 0.64,
         "Strong": 0.35,
         "Stressed": 0.0
+      }
+    }
+  },
+  "a5a8e7ceb67a0fe6be3bb48ffbd721d9ca8021d272d0bf21ed7eb463a0e10499": {
+    "verdict": {
+      "kind": "choice",
+      "probabilities": {
+        "Adequate": 0.02,
+        "VeryStrong": 0.48,
+        "Strong": 0.49,
+        "Stressed": 0.01
+      }
+    }
+  },
+  "a6658374e82f19cb80ddf7854e96fb189b81a61dca2eef3352ed4a2b52f3d056": {
+    "verdict": {
+      "kind": "choice",
+      "probabilities": {
+        "Stressed": 0.0,
+        "Adequate": 0.01,
+        "VeryStrong": 0.32,
+        "Strong": 0.67
       }
     }
   },
@@ -1654,6 +1752,17 @@
       "score": 2.31
     }
   },
+  "dc24dad605246a8c6a1a2b9648b1bb2cf9bfbf3c2030bfcc5ad10f3bca452fd2": {
+    "verdict": {
+      "kind": "choice",
+      "probabilities": {
+        "Stressed": 0.0,
+        "Adequate": 0.0,
+        "VeryStrong": 0.75,
+        "Strong": 0.25
+      }
+    }
+  },
   "e238265462771e6acc6595f5a8e7083c9604e7149a465d90e4fcf8fb366f6e12": {
     "outlook_12m": {
       "kind": "choice",
@@ -1679,6 +1788,24 @@
         "Reject": 0.62,
         "Buy": 0.0,
         "Watchlist": 0.38
+      }
+    }
+  },
+  "e9af71b2494c115a576475a2f921fa9025a33ea19ce5bf8d05b1d09eef10675b": {
+    "outlook_12m": {
+      "kind": "choice",
+      "probabilities": {
+        "Bullish": 0.0,
+        "Neutral": 1.0,
+        "Bearish": 0.0
+      }
+    },
+    "sentiment_tone": {
+      "kind": "choice",
+      "probabilities": {
+        "Neutral": 1.0,
+        "Negative": 0.0,
+        "Positive": 0.0
       }
     }
   },
@@ -1813,6 +1940,24 @@
         "VeryStrong": 0.0,
         "Adequate": 0.26,
         "Stressed": 0.46
+      }
+    }
+  },
+  "fed521631c87e0e92083685809fb38d092bd9d64047e1f3e1bec3bde8d64cd63": {
+    "outlook_12m": {
+      "kind": "choice",
+      "probabilities": {
+        "Neutral": 0.45,
+        "Bearish": 0.55,
+        "Bullish": 0.0
+      }
+    },
+    "sentiment_tone": {
+      "kind": "choice",
+      "probabilities": {
+        "Neutral": 0.32,
+        "Negative": 0.68,
+        "Positive": 0.0
       }
     }
   },

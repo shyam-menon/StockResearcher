@@ -85,9 +85,23 @@ def _scenario_details(name: str, s: dict, fd) -> str:
         + (f" + {sym}{s['cumulative_dividends']:,.2f} dividends" if s["cumulative_dividends"] else "")
         + f" &rarr; {s['cagr']:.1%} CAGR ({s['price_cagr']:.1%} price only)"
     )
-    calc_rows = [
+    revenue_rows = []
+    if s["used_decomposed_pat"]:
+        revenue_rows = [
+            ("Current FY revenue", f"{sym}{s['current_revenue']:,.0f} {unit}"),
+            ("Revenue CAGR (analyst input)", f"{s['revenue_cagr_pct']:.1f}%/yr"),
+            ("→ FY+5 revenue",
+             f"{sym}{s['current_revenue']:,.0f}{unit} &times; (1+{s['revenue_cagr_pct']:.1f}%)^5 "
+             f"= {sym}{s['future_revenue']:,.0f}{unit}"),
+            ("Future net margin (analyst input)", f"{s['future_net_margin_pct']:.1f}%"),
+            ("→ FY+5 PAT (revenue × margin)",
+             f"{sym}{s['future_revenue']:,.0f}{unit} &times; {s['future_net_margin_pct']:.1f}% "
+             f"= {sym}{s['fy_plus5_pat']:,.0f}{unit}"),
+        ]
+    pat_label = "FY+5 PAT (computed above)" if s["used_decomposed_pat"] else "FY+5 PAT (analyst input)"
+    calc_rows = revenue_rows + [
         ("Current FY PAT (latest reported)", f"{sym}{s['current_pat']:,.0f} {unit}"),
-        ("FY+5 PAT (analyst input)", f"{sym}{s['fy_plus5_pat']:,.0f} {unit}"),
+        (pat_label, f"{sym}{s['fy_plus5_pat']:,.0f} {unit}"),
         ("→ Implied 5-yr PAT CAGR",
          f"({sym}{s['fy_plus5_pat']:,.0f}{unit} &divide; {sym}{s['current_pat']:,.0f}{unit})^(1/5) &minus; 1 "
          f"= {pat_cagr_text}"),
@@ -126,7 +140,7 @@ def _slugify(name: str) -> str:
 
 def render_html(
     company: str, fd, phase, business, moat, growth, metrics, risk, val_metrics,
-    sentiment, ai_risk, balance_sheet, cash_flow, roic_runway, valuation, decision,
+    sentiment, ai_risk, balance_sheet, cash_flow, roic_runway, valuation, decision, governance,
 ) -> str:
     sections = [
         _section("01 &middot; Business Phase Analysis", [
@@ -258,6 +272,26 @@ def render_html(
             ("Decision", _badge(decision["decision"])),
             ("Kill criteria", _list(decision["kill_criteria"])),
         ]),
+        _section(
+            "15 &middot; Governance &amp; Capital Stewardship",
+            [
+                (_title_case(f"{field}_concern"), _fmt(flagged))
+                for field, flagged in governance["red_flags"].items()
+            ]
+            + [
+                (
+                    "Overall governance",
+                    _badge_p(governance["verdict"], governance["verdict_confidence"])
+                    if governance["verdict_confidence"] is not None
+                    else _badge(governance["verdict"]),
+                )
+            ],
+            extra=(
+                f"<p class='note'>Jev verdict: {html.escape(governance['verdict_raw'])} &mdash; downgraded, "
+                f"a red flag was confirmed against the evidence.</p>"
+                if governance["verdict_downgraded"] else ""
+            ),
+        ),
     ]
 
     section_html = "".join(f"<section><h2>{title}</h2>{body}</section>" for title, body in sections)

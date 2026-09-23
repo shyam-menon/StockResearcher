@@ -29,6 +29,14 @@
     "physical_world": "Core business requires physical hardware manufacturing and a global supply chain, not purely digital delivery.",
     "network": "Holds a large proprietary installed-base/developer-ecosystem network effect (App Store) that would be difficult for an AI entrant to replicate quickly."
   },
+  "governance_evidence": {
+    "promoter_pledging_pct": "Not disclosed in the provided filings",
+    "related_party_transactions": "Not disclosed in the provided filings",
+    "promoter_shareholding_trend": "Not disclosed in the provided filings",
+    "insider_transactions": "Not disclosed in the provided filings",
+    "capital_allocation_track_record": "Not disclosed in the provided filings",
+    "accounting_disclosure_red_flags": "Not disclosed in the provided filings"
+  },
   "valuation_scenarios": {
     "bear": {"probability": 0.25, "assumption": "PAT grows ~5%/yr (below the ~9-13%/yr sell-side 5yr EPS growth consensus as of Sep 2026) on iPhone/Services deceleration and regulatory pressure on App Store economics; multiple compresses to 20x on growth disappointment", "fy_plus5_pat_cr": 143000, "exit_pe": 20},
     "base": {"probability": 0.5, "assumption": "PAT grows ~10.5%/yr, the midpoint of sell-side 5yr EPS growth consensus (~9-13%/yr, GuruFocus/Finbox as of Sep 2026); exit multiple normalizes to 28x, below today's ~33-36x forward P/E but still a premium multiple reflecting the Services mix shift", "fy_plus5_pat_cr": 184660, "exit_pe": 28},

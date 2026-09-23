@@ -1,7 +1,8 @@
 # Stock Research Framework — TypeSafe Cookbook
 
 Runs the 14-module equity research framework (see `Stock_Research_Framework_v1.pdf`)
-over any stock, given two inputs per company:
+over any stock, plus a 15th module (Governance & Capital Stewardship) added beyond
+the original spec, given two inputs per company:
 
 1. **A screener.in Excel export** in the "Dr. Vijay Malik Screener Excel Template" shape
    (`Data Sheet` + `Dr Vijay Malik Analysis` tabs). Fully numeric, fully reusable —
@@ -31,22 +32,26 @@ Jev judgments" below for why.
 
 ## Which TypeSafe primitive is used where, and why
 
-9 of the 14 modules call TypeSafe. Across those, all three primitives appear, but
+10 of the 15 modules call TypeSafe. Across those, all three primitives appear, but
 very unevenly — `Choice` does most of the work, `Noul` covers a handful of pure
 yes/no checks, and `Score` is used exactly once.
 
-**`Noul` (yes/no probability) — 6 questions, 2 modules**
+**`Noul` (yes/no probability) — 10 questions, 3 modules**
 - Module 02 (Business Analysis): `pricing_power` — does the evidence show the
   company can raise prices without losing customers?
 - Module 03 (Moat Analysis): one `present_<source>` question per moat source
   (switching costs, intangible assets, network effects, low-cost production,
   counter-positioning) — is this specific moat genuinely present with concrete
   evidence?
+- Module 15 (Governance): one `<concern>_concern` question per governance
+  dimension (promoter pledging, related-party transactions, accounting/
+  disclosure red flags, capital-allocation track record) — does the evidence
+  show that specific concern is genuinely present?
 
 Noul fits these because each is a standalone yes/no judgment with no need to
 compare against sibling options.
 
-**`Choice` (pick one of a defined set) — 23 questions, 8 modules — the workhorse**
+**`Choice` (pick one of a defined set) — 24 questions, 9 modules — the workhorse**
 - Module 02: `revenue_pattern` (Recurring/OneTime/Project-based repeat/Mixed),
   `recession_behavior` (Cyclical/Resilient/ModeratelyCyclical)
 - Module 03: `size` (None/Narrow/Wide), `direction` (Widening/Stable/Narrowing)
@@ -58,6 +63,8 @@ compare against sibling options.
 - Module 10 (Balance Sheet): `verdict` — synthesizes the computed ratios into
   VeryStrong/Strong/Adequate/Stressed
 - Module 12 (Runway): `runway` — Short/Medium/Long
+- Module 15 (Governance): `verdict` — Strong/Adequate/Weak/InsufficientEvidence,
+  given all governance evidence plus the four concern checks above
 
 Choice dominates because almost every judgment in this framework is "which
 labeled bucket does this fall into," and Choice's distribution over
@@ -108,8 +115,27 @@ prompt instruction:
   By the time the decision is made, `business_quality`, `financial_quality`,
   and `valuation_verdict` are already fully-computed numbers — there's no
   genuine ambiguity left for Jev to resolve. The rule is: Reject if
-  `business_quality < 6.5` or `financial_quality < 7.0`; Watchlist if both
-  clear that bar but `valuation_verdict != "Attractive"`; Buy otherwise.
+  `business_quality < 6.5` or `financial_quality < 7.0` or Module 15's
+  governance verdict is `Weak`; Watchlist if all three clear that bar but
+  `valuation_verdict != "Attractive"`; Buy otherwise. A `Weak` governance
+  verdict rejects independently of the other two scores — a great business
+  with great financials can still destroy shareholder value through poor
+  capital allocation or governance, so this isn't blended into either
+  composite score where good sub-scores elsewhere could mask it.
+  `InsufficientEvidence` governance is treated as neutral here, the same way
+  Module 6's `Unrated` is — not researching governance shouldn't by itself
+  reject a stock.
+- **Module 15 (Governance) — evidence-consistency floor, same shape as
+  Module 3's.** Four `Noul` concern checks (pledging, related-party,
+  accounting/disclosure, capital-allocation track record) and the overall
+  `verdict` Choice are asked independently, so nothing stops Jev from calling
+  governance "Strong" while a concrete red flag was also confirmed.
+  `_apply_governance_consistency_floor` caps (never raises) a "Strong" verdict
+  down to "Adequate" whenever any concern check came back Yes. The raw Jev
+  verdict is kept as `verdict_raw` and shown alongside the floored one
+  whenever a downgrade happens. If `governance_evidence` is absent from the
+  brief entirely (or every sub-field is "Not disclosed..."), the module
+  short-circuits to `InsufficientEvidence` without a Jev call.
 
 ## Running it
 
@@ -229,6 +255,22 @@ no prose before or after the JSON):
     "capital_return_policy": "<stated payout / buyback / dilution policy, incl. any share
       issuance or stock-based-comp dilution>"
   },
+  "governance_evidence": {
+    "promoter_pledging_pct": "<latest disclosed % of promoter/insider shareholding pledged,
+      plus the trend over the last few years, or 'Not disclosed in the provided filings'>",
+    "related_party_transactions": "<material related-party transactions disclosed in the
+      annual report's RPT note, and whether they read as arm's-length or as value
+      extraction>",
+    "promoter_shareholding_trend": "<promoter/insider shareholding % over the last 3-5
+      years and its direction -- rising, stable, or falling via open-market sales>",
+    "insider_transactions": "<disclosed insider buying/selling activity, or participation
+      in preferential allotments>",
+    "capital_allocation_track_record": "<history of acquisitions/diversification and
+      whether they read as value-accretive or value-destructive (e.g. unrelated
+      diversification, overpriced M&A)>",
+    "accounting_disclosure_red_flags": "<auditor tenure/changes, qualified opinions,
+      restatements, or delayed filings, or 'Not disclosed in the provided filings'>"
+  },
   "valuation_units": {
     "currency": "<ISO code of the price currency, e.g. INR, USD>",
     "unit": "<'crore' for a screener.in Excel (India) company, 'million' for a company
@@ -236,16 +278,17 @@ no prose before or after the JSON):
   },
   "valuation_scenarios": {
     "bear": {"scenario_weight": <0-1>, "assumption": "<what has to go wrong>",
-      "fy_plus5_pat": <number, PAT 5 years out, in valuation_units.unit>,
+      "revenue_cagr_pct": <number, 5-yr revenue CAGR assumption, e.g. 8.0 for 8%>,
+      "future_net_margin_pct": <number, FY+5 net margin assumption, e.g. 12.0 for 12%>,
       "exit_pe": <number>,
       "annual_share_count_change_pct": <number, e.g. -2.5 for net buybacks, +1 for dilution>,
       "annual_dividend_per_share": <number, average per-share dividend over the 5 years,
         in the price currency>},
     "base": {"scenario_weight": <0-1>, "assumption": "<the base case path>",
-      "fy_plus5_pat": <number>, "exit_pe": <number>,
+      "revenue_cagr_pct": <number>, "future_net_margin_pct": <number>, "exit_pe": <number>,
       "annual_share_count_change_pct": <number>, "annual_dividend_per_share": <number>},
     "bull": {"scenario_weight": <0-1>, "assumption": "<what has to go right>",
-      "fy_plus5_pat": <number>, "exit_pe": <number>,
+      "revenue_cagr_pct": <number>, "future_net_margin_pct": <number>, "exit_pe": <number>,
       "annual_share_count_change_pct": <number>, "annual_dividend_per_share": <number>}
   }
 }
@@ -255,7 +298,9 @@ extractable from historical filings — use your own reasoned 5-year assumptions
 scenario (grounded in the filings' disclosed growth plans, capacity expansions, margin
 trends and capital-return record). Rules:
 
-1. UNITS: never rely on the field name. `fy_plus5_pat` must be in the unit declared in
+1. UNITS: never rely on the field name. `revenue_cagr_pct`/`future_net_margin_pct` are
+   unitless percentages, but the pipeline computes FY+5 PAT from them by multiplying
+   against the loaded financials' own reported revenue, which is in the unit declared in
    `valuation_units` ("crore" for a screener.in/India company, "million" for a company
    fetched via the Yahoo Finance fallback -- see "Running it" above). The pipeline
    rejects a brief whose declared unit does not match the loaded financials.
@@ -271,13 +316,22 @@ trends and capital-return record). Rules:
    recurring revenue, structurally higher margins) named in `assumption`; otherwise
    cap it at the historical high. Never combine optimistic earnings AND an
    above-history multiple without that justification.
-5. ASSUMPTION TEXT: each `assumption` must state the implied 5-year PAT CAGR from the
-   latest reported fiscal-year PAT. The bull case must list numeric hurdles (e.g.
-   segment margin, FCF, mix targets) that have to be met. The bear case must cover
-   volume-vs-price/mix erosion where relevant (e.g. price rises masking falling
-   units).
-6. SANITY CHECK: before finalizing, confirm that PAT / future shares x exit P/E gives a
-   per-share price that is consistent with the story in `assumption`.
+5. ASSUMPTION TEXT: each `assumption` must state the revenue-CAGR and margin
+   assumptions explicitly (not just the resulting PAT CAGR), since the pipeline
+   computes FY+5 PAT as `current revenue x (1 + revenue_cagr_pct)^5 x
+   future_net_margin_pct` -- this is what makes visible whether the optimism in a
+   scenario comes from the growth assumption or the margin assumption. The bull case
+   must also list numeric hurdles (e.g. segment margin, FCF, mix targets) that have to
+   be met. The bear case must cover volume-vs-price/mix erosion where relevant (e.g.
+   price rises masking falling units).
+6. SANITY CHECK: before finalizing, confirm that revenue CAGR x margin gives a PAT
+   consistent with the story in `assumption`, then that PAT / future shares x exit P/E
+   gives a per-share price that is also consistent with it.
+
+Legacy fallback: a scenario may instead supply a direct `fy_plus5_pat` (PAT 5 years
+out, in `valuation_units.unit`) in place of `revenue_cagr_pct`/`future_net_margin_pct`,
+for the rare case where a revenue/margin decomposition doesn't apply. If both are
+present for the same scenario, the decomposed fields silently take precedence.
 ````
 
 ## Known limitations
@@ -287,10 +341,12 @@ trends and capital-return record). Rules:
   **not guaranteed to match Dr. Vijay Malik's exact proprietary formulas** in the
   `Dr Vijay Malik Analysis` tab, which turned out to hold uncalculated formulas
   (no cached values) in this workbook and so can't be read directly.
-- Module 11's red-flag checklist and Module 10's Promoter Quality dimension are
-  narrower than the framework's full spec — a screener.in export has no shareholding
-  pattern, related-party loan, or contingent-liability data. Add that to the brief
-  JSON if you have it and want to extend those modules.
+- Module 11's red-flag checklist is narrower than the framework's full spec — a
+  screener.in export has no contingent-liability data. Module 10's Promoter Quality
+  dimension is now covered by Module 15 (Governance), which is itself bounded by
+  whatever `governance_evidence` the brief supplies — a screener.in export has no
+  shareholding-pattern or related-party data of its own, so this is still only as
+  good as what you add to the brief JSON.
 - Module 12's reinvestment-rate estimate can read as artificially low in a year where
   working-capital release makes FCF unusually high relative to NOPAT — it's a
   single-year approximation, not a smoothed multi-year figure.
