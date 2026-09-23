@@ -244,6 +244,78 @@
       }
     }
   },
+  "118df4a8faa7c8248c1a1851020e90412a67655094db475fcc304bcb92586ffd": {
+    "driver_acquisitions": {
+      "kind": "choice",
+      "probabilities": {
+        "InsufficientEvidence": 0.0,
+        "NotApplicable": 0.43,
+        "Weak": 0.5700000000000001,
+        "Moderate": 0.0,
+        "Strong": 0.0
+      }
+    },
+    "driver_customer_retention": {
+      "kind": "choice",
+      "probabilities": {
+        "InsufficientEvidence": 0.05,
+        "NotApplicable": 0.0,
+        "Weak": 0.0,
+        "Moderate": 0.21,
+        "Strong": 0.74
+      }
+    },
+    "driver_distribution_channels": {
+      "kind": "choice",
+      "probabilities": {
+        "InsufficientEvidence": 0.02,
+        "NotApplicable": 0.17,
+        "Moderate": 0.15,
+        "Weak": 0.58,
+        "Strong": 0.08
+      }
+    },
+    "driver_geographic_expansion": {
+      "kind": "choice",
+      "probabilities": {
+        "InsufficientEvidence": 0.0,
+        "NotApplicable": 0.0,
+        "Moderate": 0.01,
+        "Weak": 0.0,
+        "Strong": 0.99
+      }
+    },
+    "driver_new_products": {
+      "kind": "choice",
+      "probabilities": {
+        "InsufficientEvidence": 0.03,
+        "NotApplicable": 0.0,
+        "Moderate": 0.54,
+        "Weak": 0.01,
+        "Strong": 0.42
+      }
+    },
+    "driver_pricing_power": {
+      "kind": "choice",
+      "probabilities": {
+        "InsufficientEvidence": 0.02,
+        "NotApplicable": 0.0,
+        "Moderate": 0.5,
+        "Weak": 0.01,
+        "Strong": 0.47
+      }
+    },
+    "driver_sales_marketing": {
+      "kind": "choice",
+      "probabilities": {
+        "InsufficientEvidence": 0.29,
+        "NotApplicable": 0.15,
+        "Moderate": 0.01,
+        "Weak": 0.55,
+        "Strong": 0.0
+      }
+    }
+  },
   "11919a8e279ef3900da97b81f2be3b11fc816c7dfe764ffcf099434ec3c3bc77": {
     "verdict": {
       "kind": "choice",
@@ -444,6 +516,40 @@
         "Robust": 0.09,
         "AntiFragile": 0.91,
         "Fragile": 0.0
+      }
+    }
+  },
+  "39ee3ba476f8c66ee1a0e14a7c2b9fd97de4b9bf0ce0a6e33f00868cbc37e50e": {
+    "ai_business_model": {
+      "kind": "choice",
+      "probabilities": {
+        "Robust": 0.3,
+        "Fragile": 0.0,
+        "AntiFragile": 0.7
+      }
+    },
+    "ai_liability": {
+      "kind": "choice",
+      "probabilities": {
+        "Robust": 0.82,
+        "Fragile": 0.02,
+        "AntiFragile": 0.16
+      }
+    },
+    "ai_network": {
+      "kind": "choice",
+      "probabilities": {
+        "Robust": 0.95,
+        "Fragile": 0.0,
+        "AntiFragile": 0.05
+      }
+    },
+    "ai_physical_world": {
+      "kind": "choice",
+      "probabilities": {
+        "Robust": 0.91,
+        "Fragile": 0.0,
+        "AntiFragile": 0.09
       }
     }
   },
@@ -717,6 +823,44 @@
         "Weak": 0.0,
         "Adequate": 0.81,
         "Strong": 0.05
+      }
+    }
+  },
+  "5f8eb8912499fcb2c23caa082f2377f6af83c29f2f379fe051a6419511e82957": {
+    "direction": {
+      "kind": "choice",
+      "probabilities": {
+        "Widening": 0.95,
+        "Narrowing": 0.0,
+        "Stable": 0.05
+      }
+    },
+    "present_counter_positioning": {
+      "kind": "noul",
+      "p_yes": 0.71
+    },
+    "present_intangible_assets": {
+      "kind": "noul",
+      "p_yes": 0.9
+    },
+    "present_low_cost_production": {
+      "kind": "noul",
+      "p_yes": 0.64
+    },
+    "present_network_effects": {
+      "kind": "noul",
+      "p_yes": 0.08
+    },
+    "present_switching_costs": {
+      "kind": "noul",
+      "p_yes": 0.89
+    },
+    "size": {
+      "kind": "choice",
+      "probabilities": {
+        "None": 0.0,
+        "Wide": 1.0,
+        "Narrow": 0.0
       }
     }
   },
@@ -1256,6 +1400,24 @@
       }
     }
   },
+  "9ccc43c03a761a336ce36e951b087ba2bae5a5fb5ba4fe9eec161ad65060704c": {
+    "outlook_12m": {
+      "kind": "choice",
+      "probabilities": {
+        "Bearish": 0.21,
+        "Neutral": 0.79,
+        "Bullish": 0.0
+      }
+    },
+    "sentiment_tone": {
+      "kind": "choice",
+      "probabilities": {
+        "Negative": 0.82,
+        "Positive": 0.0,
+        "Neutral": 0.18
+      }
+    }
+  },
   "a01b076ea1269273064e86121392c673ba2bd0244a7f727a391d2669e5e7ecf8": {
     "ai_business_model": {
       "kind": "choice",
@@ -1340,6 +1502,44 @@
         "Adequate": 0.01,
         "VeryStrong": 0.32,
         "Strong": 0.67
+      }
+    }
+  },
+  "a8b84b1c2ec08a1bcbaaad9c5bbcfbbdd48f6ab71ab0c199a454e379e7c52220": {
+    "risk_competition": {
+      "kind": "choice",
+      "probabilities": {
+        "Unknown": 0.0,
+        "Red": 0.0,
+        "Green": 0.01,
+        "Yellow": 0.99
+      }
+    },
+    "risk_concentration": {
+      "kind": "choice",
+      "probabilities": {
+        "Unknown": 0.0,
+        "Red": 0.2,
+        "Green": 0.0,
+        "Yellow": 0.8
+      }
+    },
+    "risk_disruption": {
+      "kind": "choice",
+      "probabilities": {
+        "Unknown": 0.0,
+        "Red": 0.0,
+        "Green": 0.77,
+        "Yellow": 0.23
+      }
+    },
+    "risk_outside_forces": {
+      "kind": "choice",
+      "probabilities": {
+        "Unknown": 0.0,
+        "Red": 0.07,
+        "Green": 0.0,
+        "Yellow": 0.93
       }
     }
   },
@@ -1433,6 +1633,16 @@
         "Reject": 0.45,
         "Watchlist": 0.55,
         "Buy": 0.0
+      }
+    }
+  },
+  "ae880c014dbabb4c5176e45434f25125b5bb5008da1cf0ca816e5804c8061c95": {
+    "runway": {
+      "kind": "choice",
+      "probabilities": {
+        "Medium": 0.71,
+        "Long": 0.24,
+        "Short": 0.05
       }
     }
   },
@@ -1882,6 +2092,29 @@
       }
     }
   },
+  "d7ade132b1d9e59d33fd52ba8dc334d5036658dc252831bc68f81d0317a7b552": {
+    "pricing_power": {
+      "kind": "noul",
+      "p_yes": 0.92
+    },
+    "recession_behavior": {
+      "kind": "choice",
+      "probabilities": {
+        "Resilient": 0.0,
+        "ModeratelyCyclical": 0.9400000000000001,
+        "Cyclical": 0.06
+      }
+    },
+    "revenue_pattern": {
+      "kind": "choice",
+      "probabilities": {
+        "Project-based repeat": 0.9,
+        "Recurring": 0.0,
+        "OneTime": 0.1,
+        "Mixed": 0.0
+      }
+    }
+  },
   "d7c91102c6e7cb4605374bb3912a5d8a93f99ad14a51505a2f685a26c0ec6ef0": {
     "risk_competition": {
       "kind": "choice",
@@ -1930,6 +2163,33 @@
         "Adequate": 0.0,
         "VeryStrong": 0.75,
         "Strong": 0.25
+      }
+    }
+  },
+  "de066861a0b61cd55213c99800704667c03e62e88b563ad547ecff29b5e87ae2": {
+    "accounting_concern": {
+      "kind": "noul",
+      "p_yes": 0.05
+    },
+    "capital_allocation_concern": {
+      "kind": "noul",
+      "p_yes": 0.03
+    },
+    "pledging_concern": {
+      "kind": "noul",
+      "p_yes": 0.02
+    },
+    "related_party_concern": {
+      "kind": "noul",
+      "p_yes": 0.05
+    },
+    "verdict": {
+      "kind": "choice",
+      "probabilities": {
+        "Adequate": 0.33,
+        "Strong": 0.67,
+        "InsufficientEvidence": 0.0,
+        "Weak": 0.0
       }
     }
   },

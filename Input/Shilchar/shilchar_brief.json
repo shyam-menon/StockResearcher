@@ -1,80 +1,93 @@
 {
-  "company_name": "Shilchar Technologies Ltd",
-  "business_description": "Core product: custom-engineered power and distribution transformers (5 KVA to 50 MVA, up to 132 kV), made to order for each customer project. Revenue ₹623 Cr FY25 — Domestic ~57% (renewable energy, industrial), Export ~43% (US, Europe, Middle East, 25+ countries). Customers: renewable energy project developers, EPC contractors, industrial manufacturers, and utility companies. EBITDA margins held at 30%+ even as revenues scaled 57% year-on-year, achieved partly by deliberately avoiding the margin-compressing PSU tender market. Recession behaviour: moderately cyclical, mitigated by India's policy-driven 500 GW renewable energy target, which creates government-mandated, relatively recession-resilient demand.",
+  "company_name": "Shilchar Technologies Limited",
+  "ticker": "SHILCTECH.NS",
+  "business_description": "Shilchar Technologies manufactures custom-engineered power and distribution transformers (5 KVA to 50 MVA, up to 132 kV class) on a 100% made-to-order basis for renewable energy, industrial, and export markets. The company operates as a single reportable segment — Transformers & Parts. Revenue for FY26 was approximately ₹652 Cr: domestic ~57% (renewable energy IDT approximately 60% of domestic, industrial ~25%, utility ~15%) and export ~43% across 25+ countries on 5 continents (US, Europe, Middle East, Africa, Asia). Back-to-back raw material procurement eliminates commodity price risk at the order stage. Pricing power is evidenced by EBITDA margins holding at 29–31% across FY25 and 9M FY26 despite a 57% revenue surge in FY25; margins expanded 250 bps YoY to 30.8% in Q3 FY26 even as the customer mix shifted toward slower-paying domestic project clients. Export contracts are USD-denominated, providing automatic realization uplift on INR depreciation.",
+
   "moat_evidence": [
-    "UL and CSA export certifications (a 12-18 month process) create genuine entry barriers to US and Canadian markets; an NABL-accredited testing lab is mandatory for type-testing certification. Source: Intangible Assets moat, rated Narrow and Widening.",
-    "30% EBITDA margin versus Voltamp (~21%) and Bharat Bijlee (~15%), confirmed by a 5-year trend and sustained through 57% revenue growth without equity dilution. Source: Low-Cost Production via niche discipline, rated Narrow and Widening.",
-    "Export vendor re-qualification takes 6-18 months; zero US order cancellations occurred even after a 50% US tariff was imposed, confirming customer stickiness. Source: Moderate Switching Costs.",
-    "No Network Effects and no Counter-Positioning were identified — the competitive advantage comes from execution and manufacturing focus, not structural disruption of incumbents.",
-    "Export revenue grew from 19% to 43% of total revenue over 4 years; the certification moat is expanding further with a new 220 kV product tier. Source: overall moat direction rated Widening."
+    "Intangible Assets — Export Certifications: UL (Underwriters Laboratories) and CSA (Canadian Standards Association) approvals for US and Canadian markets require a 12–18 month qualification process per company filings. A competitor without these certifications cannot ship to regulated markets regardless of price, confirmed in FY25 Annual Report as a primary differentiator enabling export market access.",
+    "Intangible Assets — NABL-Accredited Testing Lab: In-house NABL-accredited testing laboratory is mandatory for type-testing certification required by most export customers. Cited in CARE Ratings press release (December 2024) as a differentiating capability not replicated by smaller domestic peers and requiring years to establish.",
+    "Intangible Assets — Specialist Brand: 4-decade specialist reputation in custom-engineered renewable-energy transformers. FY25 Annual Report states the company is 'established as a preferred partner for leading industrial, utility, and renewable energy players.' Zero order cancellations following 50% US tariff effective August 2025 confirms customers absorb premium rather than switch, per Q2 FY26 earnings call (October 18, 2025).",
+    "Low-Cost Production via Niche Discipline: EBITDA margin of ~30% vs Voltamp Transformers ~21% and Bharat Bijlee ~10–15% — a structural premium sustained through 57% revenue growth and a 50% US tariff shock. The premium arises from deliberate avoidance of margin-compressing PSU reverse-bidding tender market, confirmed in multiple investor presentations and earnings calls.",
+    "Switching Costs (Moderate): Export vendor re-qualification at regulated markets takes 6–18 months. Post-50% US tariff, existing US customers continued fulfilling orders with zero cancellations or delivery pushbacks, confirmed explicitly in Q2 FY26 earnings call — direct evidence that switching cost friction exceeds the tariff cost for customers."
   ],
+
   "growth_driver_evidence": {
-    "sales_marketing": "Marketing & sales investment remains reactive rather than proactive; winning 220 kV export approvals will require more proactive customer qualification, which is currently underdeveloped. Rated: untapped opportunity, not currently a strong driver.",
-    "distribution_channels": "No specific evidence of investment in new distribution channels beyond existing direct export relationships and EPC contractor partnerships.",
-    "geographic_expansion": "Active pivot from the US market (facing a tariff headwind) toward the Middle East and other new geographies; export revenue grew from 19% to 43% of total revenue over 4 years. Rated: Strong.",
-    "acquisitions": "No acquisitions identified; growth has been entirely organic and self-funded from internal accruals.",
-    "pricing_power": "Dollar-linked export contracts provide an automatic realisation uplift when the INR depreciates; EBITDA margins held at 30-31% through a 57% revenue surge. Rated: Strong.",
-    "new_products": "The Gavasad Expansion #3 project doubles manufacturing capacity to 14,000 MVA by April 2027 and adds a 220 kV product class, a higher-value tier with superior realisations; management targets ₹1,400-1,500 Cr revenue at full utilisation, roughly double the current run-rate. Rated: Strongest driver.",
-    "customer_retention": "Zero order cancellations after the 50% US tariff confirms customers are absorbing Shilchar's price premium rather than resisting it. Rated: Strong."
+    "sales_marketing": "Not disclosed as a distinct line item. The company operates a demand-pull model with no significant outbound sales investment reported. An export marketing team is referenced in investor presentations but no S&M expense quantum is disclosed in any filing.",
+    "distribution_channels": "Direct-to-customer model across all markets. No new channel initiatives disclosed. All sales are direct to utilities, EPC contractors, renewable energy developers, and industrial clients. No franchise, dealer, or marketplace channel development referenced in any filing.",
+    "geographic_expansion": "Export revenue grew from 19% of total revenue (FY21) to 43% (FY25) across 25+ countries. Management confirmed in Q2 FY26 earnings call (October 18, 2025) active redirection from US (50% tariff headwind) to Middle East and emerging geographies. The 220 kV product tier from Gavasad Expansion #3 (commissioning April 2027) will open new export market segments currently inaccessible due to the 132 kV ceiling.",
+    "acquisitions": "No acquisitions in the past 3 fiscal years. Management has explicitly stated all growth is funded via internal accruals through brownfield capacity expansion. Confirmed by zero change in investment line items across FY23, FY24, and FY25 cash flow statements.",
+    "pricing_power": "USD-denominated export contracts provide automatic realization increases on INR depreciation. Back-to-back procurement passes commodity price risk to order timing. EBITDA margins sustained at 29–31% across FY24, FY25, and 9M FY26 despite a 57% revenue surge, per Q3 FY26 BSE filing (January 31, 2026). Management confirmed customers are absorbing the US tariff cost rather than cancelling or renegotiating, per Q2 FY26 earnings call.",
+    "new_products": "Gavasad Expansion #3: ₹90 Cr capex, brownfield at existing 17-acre Gavasad site, doubles installed capacity from 7,500 MVA to 14,000 MVA by April 2027, and introduces 220 kV / 100 MVA class transformers — a higher-value product tier above the current 132 kV ceiling. Management targets ₹1,400–1,500 Cr annual revenue potential at full utilisation, approximately double the FY26 run-rate. Plans to bundle 220 kV power transformers with existing inverter duty transformer (IDT) offerings as a package to solar park developers, per Q2 FY26 earnings call.",
+    "customer_retention": "Zero order cancellations or delivery pushbacks reported following 50% US tariff effective August 2025, confirmed in Q2 FY26 earnings call. Order book ~₹300 Cr as of Q2 FY26. FY27 revenue guidance of ₹800–900 Cr at 90–95% utilisation of existing 7,500 MVA capacity, per Q4 FY26 management commentary. FY26 actual revenue of ₹652 Cr represents growth from ₹623 Cr in FY25 despite active capacity constraint and tariff headwinds."
   },
+
   "risk_evidence": {
-    "concentration": "Top 5 domestic customers represented 62% of domestic sales in FY24, up sharply from approximately 45% in FY23; CARE Ratings flagged this concentration as a key rating constraint. Trend: worsening.",
-    "disruption": "Shilchar is a beneficiary of the energy transition rather than a victim of disruption — AI data centre buildout, renewable energy expansion, and grid upgradation all increase transformer demand. Trend: improving.",
-    "outside_forces": "CRGO steel, which is entirely imported with no domestic source, is 80-85% of raw material cost; a 50% US tariff is currently active; there is no forex hedging on the 43% of revenue that is export-derived, though this is partly mitigated by a back-to-back procurement model. Trend: stable.",
-    "competition": "The market is fragmented, with Voltamp, Bharat Bijlee, and other players expanding into the same higher-voltage (IDT) segment; Shilchar's 30% EBITDA margin premium over these peers suggests pricing power is intact for now. Trend: slowly intensifying."
+    "concentration": "Top 5 domestic customers accounted for 62% of domestic sales in FY24, up from approximately 45% in FY23 — a worsening trend explicitly cited by CARE Ratings (December 2024) as a key rating constraint. Domestic sales represent approximately 57% of total revenue, making the top 5 domestic customers approximately 35% of total company revenue. No single customer is disclosed as exceeding 20% of total revenue. Export customers spread across 25+ countries on 5 continents provide meaningful geographic offset to domestic concentration.",
+    "disruption": "No technology disruption risk to the core product — transformers are physical electrical hardware with no digital substitute. The company is a structural beneficiary of the energy transition: India added 34.7 GW of renewable capacity in 9M FY26 alone, each GW requiring transformer capacity. AI data centres, renewable energy buildout, and grid upgradation are all incrementally positive demand drivers. Intra-industry risk: Anand Rathi research flagged that domestic peers could 'easily pivot toward manufacturing IDT transformers,' representing the primary disruption risk to Shilchar's niche within the sector.",
+    "outside_forces": "Raw materials (copper, CRGO steel, transformer oil, aluminium) constitute 80–85% of total raw material cost per CARE Ratings (December 2024). CRGO steel has no domestic Indian manufacturer and must be imported, creating forex-linked price risk. Mitigant: back-to-back procurement model means raw materials are ordered only on confirmed orders, passing through commodity risk. No active forex hedging policy on the 43% USD-denominated export revenue. US 50% tariff on Indian transformers effective August 2025 has moderated US order inflows (US estimated at below 20% of total revenue per management). West Asia crisis (H2 FY26) caused 3–5x shipping cost increases and delayed Middle East dispatches materially, contributing to Q4 FY26 revenue declining 34.6% YoY and Q1 FY27 revenue declining 15.2% YoY.",
+    "competition": "Indian transformer market is 'highly fragmented, with a large number of medium-sized players and various large established players' per CARE Ratings (December 2024). Named peers: Voltamp Transformers, Bharat Bijlee, Transformers & Rectifiers India (TRIL), KEC International. Shilchar's EBITDA margin of ~30% vs peer range of 10–21% indicates pricing pressure is not yet materialising. Forward risk: simultaneous capacity expansions by Voltamp, Bharat Bijlee, and TRIL could create industry over-supply post-FY28, potentially eroding Shilchar's margin premium. Competitive intensity is assessed as slowly intensifying."
   },
-  "price_sentiment_narrative": "Over the trailing 12 months, the stock surged to an all-time high of ₹6,125 in June 2025 on record FY25 results (+57% revenue, +60% PAT), then fell 53% to ₹2,852 as US tariffs, a capacity ceiling, and small-cap de-rating combined, before recovering to approximately ₹5,016 by April 2026. Analyst sentiment is neutral with low confidence, reflecting minimal sell-side coverage; MarketsMojo downgraded the stock to Sell in October 2025. Institutional activity has been improving: domestic institutional investor (DII) holding tripled from 0.40% to 1.49% in a single quarter (Sep-Dec 2025) as the stock corrected. Bull case: a structural domestic tailwind (34.7 GW of renewable capacity added in 9M FY26 alone), the stock trading about 18% below its all-time high while earnings are still growing, and capacity doubling by April 2027. Bear case: revenue growth decelerated to 11% year-on-year in Q3 FY26, free cash flow was negative in FY25, and a roughly 31x P/E during a known capacity-constrained growth pause leaves little room for error.",
+
+  "price_sentiment_narrative": "The stock reached an all-time high of ₹6,125 in June 2025 following record FY25 results (revenue +57% YoY to ₹623 Cr, PAT +60% YoY to ₹147 Cr) and the Gavasad Expansion #3 announcement. A subsequent 53% drawdown to ₹2,852 followed as the 50% US tariff (effective August 2025), the 100% capacity utilisation ceiling, and broader small-cap de-rating combined. Q4 FY26 results (announced May 2026) were severely disappointing: revenue fell 34.6% YoY to ₹151.65 Cr and PAT fell 48.7% YoY to ₹28.39 Cr, driven by US tariff-related order moderation and West Asia logistics disruption delaying Middle East shipments. Q1 FY27 results (August 2026) confirmed the weakness: revenue -15.2% YoY to ₹134.61 Cr, PAT -49.7% YoY to ₹20.86 Cr. The stock trades at approximately ₹3,995 as of September 2026, approximately 35% below ATH. DII holding tripled from 0.40% to 1.49% between September and December 2025 signalling institutional accumulation at lower levels. MarketsMOJO downgraded to Sell in October 2025 (Mojo Score 47/100). Bull case: accelerating India renewable buildout (34.7 GW in 9M FY26); Gavasad Expansion #3 on schedule for April 2027; FY27 management guidance ₹800–900 Cr revenue; stock now trades at approximately 22–25x FY26 PAT, closer to fair value than at the ATH. Bear case: two consecutive quarters of approximately 50% YoY profit decline with no clear resolution timeline for West Asia disruption; receivables structural concern unresolved (DSO ~123 days in FY25); peer over-capacity risk building post-FY28.",
+
   "ai_risk_evidence": {
-    "liability": "A transformer that fails due to incorrect specifications can destroy an entire industrial facility — the cost of an AI-driven design error is catastrophic, requiring physical testing and expert engineering oversight that AI cannot replace. Rated: anti-fragile.",
-    "business_model": "Revenue is project-based and priced per unit, not per user seat; if AI helps Shilchar design transformers faster, the company earns more from the same manufacturing capacity, not less. Rated: anti-fragile.",
-    "physical_world": "Transformers are physical hardware requiring manufacturing, on-site installation, and testing at the customer's job site; a pure software agent cannot substitute for this physical process. Rated: anti-fragile.",
-    "network": "There is no proprietary two-sided network effect, but customers cannot easily switch suppliers given certification requirements and long vendor qualification processes. Rated: robust (defensible but not a direct AI beneficiary)."
+    "liability": "A transformer failure due to incorrect specifications can destroy an industrial facility, solar park, or grid section, with catastrophic human safety and financial consequences. Physical testing, NABL-certified type-testing, expert engineering sign-off, and regulatory inspection are mandatory prerequisites — none of which can be substituted by AI output. The high liability cost of error is a structural AI-fragility insulator requiring certified human oversight regardless of AI advancement.",
+    "business_model": "Revenue is strictly per-unit and project-based — one transformer manufactured per confirmed customer order. No seat-based, per-user, or subscription pricing exists in any part of the business as reported in FY25 and FY26 filings. If AI tools accelerate transformer design, the company benefits by handling more orders per engineer; there is no mechanism by which AI productivity gains reduce Shilchar's revenue.",
+    "physical_world": "100% physical hardware manufacturing. The product is a steel-and-copper electrical machine requiring precision winding, oil filling, pressure testing, and type-certification at a licensed facility. Installation is on-site at the customer's project location. The manufacturing facility at Gavasad, Gujarat (17 acres) is the sole production location. No digital or software component exists in the core product.",
+    "network": "No two-sided platform or network. However, UL/CSA certification rights represent years of accumulated compliance data, testing records, and regulator relationships that are institution-specific and not publicly available. The NABL-accredited testing laboratory and its accumulated test records cannot be replicated by AI from public data. These proprietary assets create barriers AI cannot easily commoditise."
   },
-  "valuation_scenarios": {
-    "bear": {
-      "assumption": "US tariff becomes permanent and peer over-capacity compresses margins to approximately 23% Dividend per share is assumed to grow to about Rs 14.0, holding the current ~6.5% payout ratio as profit grows, since Shilchar's stated priority is funding capacity expansion from retained earnings rather than raising the payout. Share count is held flat; no buyback program or material dilution is disclosed.",
-      "exit_pe": 22,
-      "scenario_weight": 0.25,
-      "fy_plus5_pat": 160,
-      "annual_share_count_change_pct": 0.0,
-      "annual_dividend_per_share": 14.0
-    },
-    "base": {
-      "assumption": "Capacity expansion commissions on schedule, margins hold at 29-31%, export recovery begins from FY27 Dividend per share is assumed to grow to about Rs 32.0, holding the current ~6.5% payout ratio as profit grows, since Shilchar's stated priority is funding capacity expansion from retained earnings rather than raising the payout. Share count is held flat; no buyback program or material dilution is disclosed.",
-      "exit_pe": 24,
-      "scenario_weight": 0.5,
-      "fy_plus5_pat": 380,
-      "annual_share_count_change_pct": 0.0,
-      "annual_dividend_per_share": 32.0
-    },
-    "bull": {
-      "assumption": "220 kV product tier wins export approvals and Middle East expansion accelerates Dividend per share is assumed to grow to about Rs 44.0, holding the current ~6.5% payout ratio as profit grows, since Shilchar's stated priority is funding capacity expansion from retained earnings rather than raising the payout. Share count is held flat; no buyback program or material dilution is disclosed.",
-      "exit_pe": 28,
-      "scenario_weight": 0.25,
-      "fy_plus5_pat": 520,
-      "annual_share_count_change_pct": 0.0,
-      "annual_dividend_per_share": 44.0
-    }
+
+  "capital_return_evidence": {
+    "current_shares_outstanding": "Approximately 1,14,41,953 shares (1.144 crore) as of April 2026, post the 1:2 bonus issue completed in FY25. Share capital stands at approximately ₹11.4 Cr at ₹5 face value per FY25 balance sheet. Verified via: Market Cap ₹5,739 Cr at CMP ₹5,016 (April 24, 2026) implies 1,143,912 shares; Q3 FY26 PAT ₹42.34 Cr divided by reported EPS ₹37.01 implies 1,143,914 shares — consistent.",
+    "shares_repurchased_last_3_fy": "FY26: Nil. FY25: Nil. FY24: Nil. No buyback programme initiated in any of the last 3 fiscal years. Confirmed by absence of buyback disclosures in cash flow statements and no SEBI buyback filing on BSE portal.",
+    "buyback_spend_last_3_fy": "FY26: ₹0 Cr. FY25: ₹0 Cr. FY24: ₹0 Cr.",
+    "remaining_buyback_authorization": "None. No buyback programme authorized as of the most recent available filings.",
+    "dividend_per_share_last_3_fy": "FY25: ₹12.50 per share declared (record date August 8, 2025, per BSE announcement). FY24: approximately ₹5.26 per share on a post-bonus-adjusted basis (₹6 Cr total dividend cash outflow per FY24 cash flow statement; restated on current post-1:2-bonus share count). FY23: approximately ₹2.63 per share on a post-bonus-adjusted basis (₹3 Cr total dividend cash outflow; restated on current post-both-bonus share count). Note: the 1:1 bonus (FY23) and 1:2 bonus (FY25) increase share count without cash outflow; all per-share figures restated on the current 1.144 crore share count for comparability.",
+    "free_cash_flow_last_3_fy": "FY26 (estimated): approximately +₹40–60 Cr (partial recovery from FY25 receivables peak; capex remains elevated at ₹40–50 Cr for Gavasad Expansion #3). FY25: -₹8.2 Cr (CFO ₹39.6 Cr minus capex ₹47.8 Cr; FCF negative due to ₹136 Cr receivables surge absorbing operating cash per Motilal Oswal cash flow data). FY24: +₹53.9 Cr (CFO ₹76.5 Cr minus capex ₹22.6 Cr per Equitymaster FY24 Annual Report analysis).",
+    "capital_return_policy": "No formal stated payout ratio. Dividends paid every fiscal year since at least FY20. Two non-cash bonus issues (1:1 in FY23; 1:2 in FY25) reflect management confidence in sustained earnings. No equity dilution via QIP, rights issue, or preferential allotment in last 3 fiscal years. ESOP scheme exists with estimated dilution below 0.5% per year. ₹90 Cr growth capex committed for Gavasad Expansion #3 fully funded from internal accruals, consistent with stated no-borrowings policy confirmed across investor communications."
   },
+
+  "governance_evidence": {
+    "promoter_pledging_pct": "0% pledged across all quarterly shareholding pattern filings available. No promoter shares have been pledged in any period covered by disclosures. Trend: consistently nil.",
+    "related_party_transactions": "No material related-party transactions flagged by CARE Ratings (December 2024) or identified as concerns in the FY25 Annual Report. Standard RPT disclosures (director remuneration, sitting fees) appear at normal levels for a company of this size. No promoter-entity loans, advances to group companies, or off-market transactions noted in any reviewed filing.",
+    "promoter_shareholding_trend": "December 2025: 62.12%. September 2024: 64.00%. Change: -1.88 percentage points over 15 months. Mechanism: open market sales by promoter Alay Jitendra Shah (117,000 shares disclosed in BSE filings per Angel One shareholding data). Trend: slightly declining. At 62.12%, promoter family retains firm majority control. Pace of decline is modest and not yet a governance concern but warrants monitoring.",
+    "insider_transactions": "Promoter Alay Jitendra Shah sold 117,000 shares via open market transactions (disclosed in BSE shareholding pattern filings). No insider buying disclosed. No participation in preferential allotments or warrants in the last 3 fiscal years.",
+    "capital_allocation_track_record": "Assessed as disciplined and value-accretive. All three capacity expansion cycles (FY22, FY24-25, and the current Gavasad Expansion #3) funded from internal accruals without borrowing. No acquisitions, no unrelated diversification, no overpriced M&A in any period reviewed. Historical ROCE of 71% (FY25) confirms deployed capital generates exceptional returns. The single capital allocation concern is the FY25 receivables management failure (₹136 Cr DSO extension from ~65 days to ~123 days) which consumed operating cash flow — assessed as an operational execution issue, not a capital misallocation.",
+    "accounting_disclosure_red_flags": "No auditor changes, qualified opinions, restatements, or delayed filings identified in FY25 Annual Report or CARE Ratings press release (December 2024). Audit committee disclosures appear standard. The only notable disclosure item is a GST demand of ₹3.2 Cr (Vadodara, April 2026), contested by management and immaterial at less than 2% of FY26 PAT."
+  },
+
   "valuation_units": {
     "currency": "INR",
     "unit": "crore"
   },
-  "capital_return_evidence": {
-    "current_shares_outstanding": "Approximately 7.6 million shares (equity share capital of about Rs 7.63 Cr at Rs 10 face value, FY25). An older third-party source cites a much smaller figure (3,813,400 shares), likely stale or from before a corporate action; not independently confirmed against the annual report in this session.",
-    "shares_repurchased_last_3_fy": "No buyback identified. This brief's own moat evidence already notes the 57% FY25 revenue growth was achieved 'without equity dilution,' and no acquisitions or share issuance were identified.",
-    "buyback_spend_last_3_fy": "None found",
-    "remaining_buyback_authorization": "None disclosed",
-    "dividend_per_share_last_3_fy": "Latest dividend approximately Rs 12.50 (May 2026); FY23-24 dividends totaled about Rs 10.00 across 4 payments. Payout ratio is low, reported at about 6.5% of earnings.",
-    "free_cash_flow_last_3_fy": "FY25 operating cash flow approximately Rs 39.6 Cr against investing outflow of about Rs 47.8 Cr (largely the capacity expansion); free cash flow was therefore negative in FY25, consistent with the bear-case note elsewhere in this brief that 'free cash flow was negative in FY25.'",
-    "capital_return_policy": "No formal policy disclosed. Observed practice is a low payout ratio (~6.5%) with the large majority of profit retained to fund the Gavasad Expansion #3 capacity buildout (doubling capacity by April 2027)."
-  },
-  "governance_evidence": {
-    "promoter_pledging_pct": "Not disclosed in the provided filings",
-    "related_party_transactions": "Not disclosed in the provided filings",
-    "promoter_shareholding_trend": "Not disclosed in the provided filings",
-    "insider_transactions": "Not disclosed in the provided filings",
-    "capital_allocation_track_record": "Not disclosed in the provided filings",
-    "accounting_disclosure_red_flags": "Not disclosed in the provided filings"
+
+  "valuation_scenarios": {
+    "bear": {
+      "scenario_weight": 0.25,
+      "assumption": "US tariff remains permanent with no India-US trade deal; West Asia logistics disruption persists through FY27 reducing Middle East dispatches; peer over-capacity (Voltamp, TRIL, Bharat Bijlee simultaneous expansions completing FY28-29) erodes pricing discipline, compressing EBITDA margin from ~30% to ~22% and net margin from ~21% to 15%; Gavasad Expansion #3 delayed to FY28. Revenue CAGR of 10% (₹652 Cr to ~₹1,050 Cr by FY31) reflects domestic renewable demand partially offset by export softness — volume growth positive but price/mix erosion from competition drives margin contraction. Sanity check: ₹652 × 1.10^5 × 15% = ₹157 Cr FY31 PAT; at 18x exit PE = ₹2,826 Cr market cap vs current ~₹4,566 Cr — consistent with material de-rating under margin compression. Exit PE de-rates to 18x as EBITDA margin falls below 25%, disqualifying premium historical multiple.",
+      "revenue_cagr_pct": 10.0,
+      "future_net_margin_pct": 15.0,
+      "exit_pe": 18,
+      "annual_share_count_change_pct": 0.5,
+      "annual_dividend_per_share": 10.0
+    },
+    "base": {
+      "scenario_weight": 0.50,
+      "assumption": "Gavasad Expansion #3 commissions April 2027 on schedule; 220 kV product wins domestic reference customers by FY28 and first export approvals by FY29; Middle East export recovery from FY27 as logistics normalise; EBITDA margins hold at 29–31% as custom/niche positioning and dollar-linked export pricing protect pricing power; incremental ROIC on new capacity estimated at 45–55%, sustaining value creation spread above cost of capital. Revenue CAGR of 18% (₹652 Cr to ~₹1,491 Cr by FY31) driven by capacity ramp from FY28 at 60–70% initial utilisation reaching ~85% by FY31; net margin stable at 21% consistent with FY25 actual and 9M FY26 trend. Required hurdles: FY27 revenue ≥ ₹800 Cr per management guidance, FY28 revenue ≥ ₹1,050 Cr as new capacity reaches 60% utilisation. Sanity check: ₹652 × 1.18^5 × 21% = ₹313 Cr FY31 PAT; at 25x exit PE (anchored to 3-year average P/E of 27.5x with modest competitive-intensity discount) = ₹7,825 Cr market cap vs current ~₹4,566 Cr — consistent with moderate re-rating as expansion delivers.",
+      "revenue_cagr_pct": 18.0,
+      "future_net_margin_pct": 21.0,
+      "exit_pe": 25,
+      "annual_share_count_change_pct": 0.5,
+      "annual_dividend_per_share": 16.0
+    },
+    "bull": {
+      "scenario_weight": 0.25,
+      "assumption": "India-US trade deal resolves tariff by H1 FY27 restoring US export flows; 220 kV wins first export approvals by FY28 opening higher-value product tier; Middle East and Africa scales to 15%+ of revenue by FY29; capacity ramps to 90%+ utilisation by FY30. Revenue CAGR of 24% (₹652 Cr to ~₹1,880 Cr by FY31). Net margin expands to 23% as 220 kV products carry 3–5pp higher net margin than existing mix on same manufacturing overhead base. Required numeric hurdles: FY28 revenue ≥ ₹1,000 Cr; FY28 EBITDA margin ≥ 32%; FCF/PAT ratio recovering to above 0.80x by FY27 as receivables normalise post-expansion ramp. Exit PE 30x justified by: (a) structurally higher EBITDA margins above 32% from premium 220 kV product mix, (b) multi-geography export diversification reducing single-market tariff risk — both represent quality improvements vs historical business, supporting a premium above the 27.5x 3-year historical average. Sanity check: ₹652 × 1.24^5 × 23% = ₹432 Cr FY31 PAT; at 30x exit PE = ₹12,970 Cr market cap vs current ~₹4,566 Cr — consistent with a re-rating to quality industrial compounder status.",
+      "revenue_cagr_pct": 24.0,
+      "future_net_margin_pct": 23.0,
+      "exit_pe": 30,
+      "annual_share_count_change_pct": 0.5,
+      "annual_dividend_per_share": 22.0
+    }
   }
 }
